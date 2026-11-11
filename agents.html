@@ -1,0 +1,58 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080d18">
+<meta name="description" content="Agent Studio — AI Agent 與 Multi-Agent System 協作流程展示 (SIMULATION)。">
+<title>Agent Studio | Daven Demo</title>
+<link rel="stylesheet" href="assets/demo.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="page-progress" aria-hidden="true"><span id="pageProgressBar"></span></div>
+<header class="top">
+  <a class="brand" href="index.html"><span class="brand-mark">D</span><span><b>DAVEN</b><small>AI ENGINEERING LAB</small></span></a>
+  <button class="nav-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="primaryNav">MENU <span aria-hidden="true">☰</span></button>
+  <nav class="nav" id="primaryNav" aria-label="Demo navigation">
+    <a href="index.html">Home</a>
+    <a href="runtime.html">Runtime</a>
+    <a class="active" href="agents.html" aria-current="page">Agents</a>
+    <a href="prompt-rag.html">Prompt / RAG</a>
+    <a href="genai-workflow.html">GenAI Workflow</a>
+  </nav>
+  <span class="status"><i></i>SIMULATION / AGENT STUDIO</span>
+</header>
+<main id="main">
+  <a class="back-link" href="index.html">← Back to Portfolio</a>
+  <div class="kicker">02 / AGENT STUDIO</div>
+  <h1 style="margin:8px 0 6px;font-size:clamp(28px,4vw,40px);letter-spacing:-.04em">AI Agent 與 Multi-Agent System</h1>
+  <p class="page-intro">展示 Agent 角色分工、任務編排、工具使用與交付驗證。工具觀念涵蓋 n8n、OpenClaw、Kilo Code、Cline、Codex。所有 Agent 執行皆為 <strong>SIMULATED</strong>，不會呼叫外部 Agent 或 LLM。</p>
+
+  <section class="lab" id="agents"><div class="lab-head"><div><div class="kicker">ORCHESTRATION</div><h2>Agent Studio</h2><p>Agent Role Selection、Objective Input、Multi-Agent Workflow、Role Handoff Trace、Execution Status、Workflow Completion Report。</p></div><span class="num">01</span></div><div class="workbench">
+    <div class="panel"><div class="panel-title">TASK DEFINITION <span class="sim">SIMULATED</span></div><label class="label" for="objective">Objective<textarea id="objective">Design a secure RAG assistant for an internal knowledge base.</textarea></label><div id="agentChoices">
+      <label class="checkrow"><input type="checkbox" value="Planner" checked> Planner — 拆解目標與限制</label><label class="checkrow"><input type="checkbox" value="Researcher" checked> Researcher — 搜集依據與假設</label><label class="checkrow"><input type="checkbox" value="Builder" checked> Builder — 設計實作路徑</label><label class="checkrow"><input type="checkbox" value="Critic" checked> Critic — 尋找失效模式</label><label class="checkrow"><input type="checkbox" value="Validator" checked> Validator — 驗證輸出與驗收條件</label><label class="checkrow"><input type="checkbox" value="Operator"> Operator — 部署、監控與回滾</label></div><div class="actions-sm"><button class="btn primary" id="runAgents" type="button">Run workflow simulation</button><button class="btn" id="resetAgents" type="button">Reset</button></div><p class="hint">這是前端協作流程示範，不會呼叫外部 Agent、LLM 或 n8n。</p><div class="tags" style="margin-top:12px"><span>n8n</span><span>OpenClaw</span><span>Kilo Code</span><span>Cline</span><span>Codex</span></div></div>
+    <div class="panel"><div class="panel-title">ORCHESTRATION TRACE <span class="pill" id="agentState">READY</span></div><div class="trace" id="agentTrace"><div class="hint">選擇角色並執行工作流，以檢視任務序列與交接紀錄。</div></div></div>
+  </div></section>
+
+  <section class="lab" id="devtools"><div class="lab-head"><div><div class="kicker">DEVELOPER TOOLCHAIN</div><h2>Agent 任務交接與 Diff 審查</h2><p>Git / GitHub 操作概念、Diff Reviewer、Before / After 程式碼差異檢視，支援 AI 輔助施工後的交付驗證。</p></div><span class="num">02</span></div><div class="workbench">
+    <div class="panel"><div class="panel-title">TASK HANDOFF CONCEPTS <span class="pill">REFERENCE</span></div><div class="trace"><div class="trace-item"><small>GIT / GITHUB</small><b>Versioned collaboration</b><p>以分支隔離變更、提交可追溯歷史、透過 PR 與 CI 驗證後再合併；交付前檢查 diff 與狀態。</p></div><div class="trace-item"><small>AGENT HANDOFF</small><b>Role-to-role delivery</b><p>每個角色輸出明確交接物（需求、假設、變更、驗證結果），下一角色在可檢查的輸入上繼續工作。</p></div><div class="trace-item"><small>AI CODING TOOLS</small><b>Kilo Code / Cline / Codex</b><p>輔助實作與審查，但需人工/自動化驗證與 diff 檢視確保品質與安全。</p></div></div></div>
+    <div class="panel"><div class="panel-title">DIFF REVIEWER <span class="pill">LOCAL</span></div><label class="label" for="before">Before<textarea id="before">const retries = 3;
+const timeout = 5000;
+
+function connect() {
+  return request(timeout);
+}</textarea></label><label class="label" for="after">After<textarea id="after">const retries = 5;
+const timeout = 8000;
+
+function connect() {
+  return request(timeout, retries);
+}</textarea></label><div class="actions-sm"><button class="btn primary" id="compareDiff" type="button">Compare changes</button><button class="btn" id="resetDiff" type="button">Reset example</button></div><div class="diff" id="diffOutput" aria-live="polite">執行 Compare 以顯示差異。</div></div>
+  </div></section>
+</main>
+<footer class="footer"><b>DAVEN / AI ENGINEERING LAB</b><span>Agent Studio · SIMULATION</span><span><a href="index.html">← Portfolio</a>　·　<a href="https://github.com/jlyay45684/Daven_Demo" target="_blank" rel="noopener noreferrer">Source ↗</a></span></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="assets/common.js" defer></script>
+<script src="assets/agents.js" defer></script>
+</body>
+</html>

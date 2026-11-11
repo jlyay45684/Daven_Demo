@@ -1,0 +1,53 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080d18">
+<meta name="description" content="GenAI Workflow & Product Delivery Studio — 生成式 AI 工作流與產品交付展示 (SIMULATION)。">
+<title>GenAI Workflow &amp; Product Delivery | Daven Demo</title>
+<link rel="stylesheet" href="assets/demo.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="page-progress" aria-hidden="true"><span id="pageProgressBar"></span></div>
+<header class="top">
+  <a class="brand" href="index.html"><span class="brand-mark">D</span><span><b>DAVEN</b><small>AI ENGINEERING LAB</small></span></a>
+  <button class="nav-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="primaryNav">MENU <span aria-hidden="true">☰</span></button>
+  <nav class="nav" id="primaryNav" aria-label="Demo navigation">
+    <a href="index.html">Home</a>
+    <a href="runtime.html">Runtime</a>
+    <a href="agents.html">Agents</a>
+    <a href="prompt-rag.html">Prompt / RAG</a>
+    <a class="active" href="genai-workflow.html" aria-current="page">GenAI Workflow</a>
+  </nav>
+  <span class="status"><i></i>SIMULATION / GENAI &amp; DELIVERY</span>
+</header>
+<main id="main">
+  <a class="back-link" href="index.html">← Back to Portfolio</a>
+  <div class="kicker">04 / GENAI WORKFLOW &amp; PRODUCT DELIVERY STUDIO</div>
+  <h1 style="margin:8px 0 6px;font-size:clamp(28px,4vw,40px);letter-spacing:-.04em">生成式 AI 工作流與產品交付</h1>
+  <p class="page-intro">ComfyUI-style 節點工作流配置與產品交付整合：GenAI Workflow → Output Configuration → Product Prototype → Data Analysis → Delivery Checklist。所有生成流程為 <strong>SIMULATED</strong>，CSV 僅在瀏覽器本機處理。</p>
+
+  <section class="lab" id="genai"><div class="lab-head"><div><div class="kicker">GENERATIVE PIPELINES</div><h2>GenAI Workflow Studio</h2><p>ComfyUI-style Workflow Graph、Model/Checkpoint、LoRA、Positive/Negative Prompt、Steps/CFG/Seed（參數）、Workflow Execution Animation、JSON Export。技術：ComfyUI、FLUX、Stable Diffusion、LoRA。</p></div><span class="num">01</span></div><div class="workbench">
+    <div class="panel"><div class="panel-title">GENERATION PARAMETERS <span class="sim">SIMULATED</span></div><label class="label" for="genModel">Model family<select id="genModel"><option>FLUX</option><option>Stable Diffusion XL</option><option>Stable Diffusion 1.5</option></select></label><label class="label" for="checkpoint">Checkpoint<input id="checkpoint" type="text" value="flux1-dev.safetensors"></label><label class="label" for="lora">LoRA profile<select id="lora"><option>No LoRA</option><option>Cinematic detail · 0.75</option><option>Character consistency · 0.65</option><option>Product photography · 0.70</option></select></label><label class="label" for="positive">Positive prompt<textarea id="positive">Futuristic AI engineering laboratory, clean industrial design, cinematic cyan light, detailed composition.</textarea></label><label class="label" for="negative">Negative prompt<textarea id="negative">low quality, blurry, distorted geometry, watermark</textarea></label><div class="grid2"><div><label class="label" for="steps">Steps</label><input id="steps" type="number" value="28" min="1" max="100"></div><div><label class="label" for="cfg">CFG / Guidance</label><input id="cfg" type="number" value="3.5" min="1" max="20" step=".5"></div></div><div class="actions-sm"><button class="btn primary" id="runGen" type="button">Simulate node workflow</button><button class="btn" id="exportGen" type="button">Export workflow JSON</button></div><p class="hint">不會載入模型或生成真實圖片；真正的推論需要 ComfyUI Runtime 與模型權重。</p><div class="tags" style="margin-top:12px"><span>ComfyUI</span><span>FLUX</span><span>Stable Diffusion</span><span>LoRA</span></div></div>
+    <div class="panel"><div class="panel-title">NODE GRAPH <span class="pill" id="genState">IDLE</span></div><div class="nodegraph" id="nodeGraph"><div class="node"><small>01 / INPUT</small>Text Encode</div><div class="node"><small>02 / MODEL</small>Checkpoint</div><div class="node"><small>03 / ADAPTER</small>LoRA</div><div class="node"><small>04 / SAMPLE</small>KSampler</div><div class="node"><small>05 / OUTPUT</small>VAE Decode</div></div><div class="output" id="genLog" style="margin-top:13px" aria-live="polite">// Workflow not executed.</div><div class="preview" id="genPreview" style="margin-top:12px"><b>Output preview</b><p class="hint">Simulation only — no image generated.</p></div></div>
+  </div></section>
+
+  <section class="lab" id="product"><div class="lab-head"><div><div class="kicker">PRODUCT DELIVERY</div><h2>UI/UX、AI4BI、Page Builder、Android</h2><p>UI/UX Live Prototype、AI4BI CSV Explorer、Elementor / Page Builder Concept、Android Release Checklist。</p></div><span class="num">02</span></div><div class="workbench">
+    <div class="panel"><div class="panel-title">UI / UX LIVE PROTOTYPE <span class="pill">INTERACTIVE</span></div><label class="label" for="productTitle">Product title<input id="productTitle" type="text" value="NEXUS — AI Workspace"></label><div class="grid2"><div><label class="label" for="productColor">Accent color</label><input id="productColor" type="color" value="#63d9ff"></div><div><label class="label" for="productLayout">Layout</label><select id="productLayout"><option value="wide">Desktop</option><option value="mobile">Mobile</option></select></div></div><div class="preview" id="prototype"><small>AI WORKSPACE / OVERVIEW</small><h3 id="prototypeTitle">NEXUS — AI Workspace</h3><p>Bring your models, agents and knowledge into one workflow.</p><div class="kpis"><div><small>MODEL ROUTER</small><b>03</b></div><div><small>ACTIVE AGENTS</small><b>05</b></div><div><small>KNOWLEDGE</small><b>12</b></div></div><button class="btn primary" id="prototypeAction" type="button">Open workspace</button><span id="prototypeFeedback" class="hint"></span></div></div>
+    <div class="panel"><div class="panel-title">AI4BI DATA EXPLORER <span class="pill">LOCAL CSV</span></div><label class="label" for="csv">CSV (category,value)</label><textarea id="csv">category,value
+AI Projects,12
+Automation,8
+Data Apps,6
+Prototypes,10</textarea><div class="actions-sm"><button class="btn primary" id="analyzeCsv" type="button">Analyze dataset</button><button class="btn" id="sampleCsv" type="button">Load sample</button></div><div id="biOutput" class="trace" style="margin-top:12px"><div class="hint">資料只在瀏覽器中處理，不會上傳。</div></div></div>
+    <div class="panel"><div class="panel-title">PAGE BUILDER / ELEMENTOR CONCEPT <span class="pill">WIREFRAME</span></div><div class="actions-sm"><button class="btn builder active" data-block="hero" type="button">Hero</button><button class="btn builder" data-block="features" type="button">Features</button><button class="btn builder" data-block="cta" type="button">CTA</button></div><div id="builderPreview" class="preview" style="margin-top:12px"><small>HERO SECTION</small><h3>Build a better digital workflow.</h3><p>Compose sections, test hierarchy and refine the responsive experience.</p></div><p class="hint">以 Elementor 的 Section / Container / Widget 思路示意，不會修改 WordPress 網站。</p></div>
+    <div class="panel"><div class="panel-title">ANDROID RELEASE CHECKLIST <span class="pill">BUILD FLOW</span></div><div class="kpis"><div><small>READINESS</small><b id="releasePercent">0%</b></div><div><small>CHECKS</small><b id="releaseCount">0 / 6</b></div></div><div class="bar"><i id="releaseBar"></i></div><div id="releaseChecks"><label class="checkrow"><input type="checkbox"> Application ID / package name verified</label><label class="checkrow"><input type="checkbox"> Version code and version name updated</label><label class="checkrow"><input type="checkbox"> Debug build installed and smoke-tested</label><label class="checkrow"><input type="checkbox"> Release signing configuration checked</label><label class="checkrow"><input type="checkbox"> Permissions and privacy disclosures reviewed</label><label class="checkrow"><input type="checkbox"> APK / AAB artifact archived</label></div><p class="hint">清單只追蹤驗收狀態，不會執行 Gradle Build。</p></div>
+  </div></section>
+</main>
+<footer class="footer"><b>DAVEN / AI ENGINEERING LAB</b><span>GenAI Workflow &amp; Product Delivery · SIMULATION</span><span><a href="index.html">← Portfolio</a>　·　<a href="https://github.com/jlyay45684/Daven_Demo" target="_blank" rel="noopener noreferrer">Source ↗</a></span></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="assets/common.js" defer></script>
+<script src="assets/genai-workflow.js" defer></script>
+</body>
+</html>

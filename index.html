@@ -1,315 +1,55 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#080d18">
-<meta name="description" content="Daven — AI Engineering Lab, interactive portfolio demonstrations.">
+<meta name="description" content="Daven — AI Engineering Lab 作品集入口，四個獨立互動 Demo。">
 <title>Daven | AI Engineering Lab</title>
-<style>
-:root{color-scheme:dark;--bg:#080d18;--panel:#101a2b;--panel2:#142137;--line:#26364f;--ink:#e9f1ff;--muted:#9aacc5;--cyan:#63d9ff;--blue:#748cff;--green:#8be0b1;--amber:#ffcb77;--red:#ff8d9b}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 78% 0%,#122c47 0,transparent 38%),var(--bg);color:var(--ink);font:15px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI","Noto Sans TC",sans-serif}
-a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit}button{cursor:pointer}
-.top{position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:13px max(22px,calc((100% - 1240px)/2));background:#080d18eF;border-bottom:1px solid #26364f;backdrop-filter:blur(18px)}
-.brand{display:flex;align-items:center;gap:11px;min-width:190px}.brand-mark{display:grid;place-items:center;width:40px;height:40px;border:1px solid #4b91b3;border-radius:12px;color:var(--cyan);font-weight:900;font-size:21px;box-shadow:inset 0 0 20px #4dd9ff18}.brand b{display:block;letter-spacing:.16em}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.18em}
-.nav{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}.nav button{border:1px solid transparent;background:transparent;color:var(--muted);padding:8px 10px;border-radius:8px;font-size:12px}.nav button:hover,.nav button.active{border-color:#31536e;background:#10263c;color:var(--cyan)}
-.status{font-size:10px;letter-spacing:.15em;color:var(--green);white-space:nowrap}.status i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:7px;box-shadow:0 0 12px var(--green)}
-main{max-width:1240px;margin:auto;padding:42px 24px 80px}.hero{display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:35px;padding:50px 0 35px}.eyebrow,.kicker{font-size:11px;letter-spacing:.18em;color:var(--cyan);text-transform:uppercase}.hero h1{font-size:clamp(38px,6vw,68px);line-height:1.04;letter-spacing:-.055em;margin:17px 0}.hero h1 em{font-style:normal;color:var(--cyan)}.hero p{max-width:670px;color:#b3c2d7;font-size:17px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0}.btn{border:1px solid #34506d;background:#14243a;color:var(--ink);padding:10px 15px;border-radius:9px;font-weight:700;font-size:13px}.btn.primary{background:linear-gradient(110deg,#155170,#263d80);border-color:#4c9fc2;color:#fff}.btn:hover{filter:brightness(1.18)}.hero-art{min-height:280px;position:relative;display:grid;place-items:center}.orb{width:155px;height:155px;border-radius:50%;border:1px solid #58c9f5;display:grid;place-items:center;color:var(--cyan);font-size:34px;font-weight:900;box-shadow:0 0 65px #48bce933,inset 0 0 35px #48bce922;position:relative}.orb:before,.orb:after{content:"";position:absolute;border:1px solid #477b9d70;border-radius:50%;width:240px;height:240px;transform:rotate(-28deg) scaleY(.45)}.orb:after{width:310px;height:310px;transform:rotate(42deg) scaleY(.38)}.sat{position:absolute;padding:7px 11px;background:#12233a;border:1px solid #355a7b;border-radius:8px;color:#c3eaff;font-size:11px}.s1{top:12%;left:16%}.s2{top:22%;right:7%}.s3{bottom:22%;left:7%}.s4{bottom:8%;right:18%}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 50px}.stat,.panel,.cap{background:linear-gradient(150deg,#122039,#0d1626);border:1px solid var(--line);border-radius:14px}.stat{padding:15px 18px}.stat b{display:block;color:var(--cyan);font-size:25px}.stat span{color:var(--muted);font-size:11px}
-.section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin:56px 0 20px}.section-head h2{font-size:30px;line-height:1.1;margin:8px 0}.section-head p{max-width:560px;color:var(--muted);margin:0}.capgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.cap{padding:19px;transition:.2s;display:block}.cap:hover{transform:translateY(-3px);border-color:#4c8eb3}.cap .num{font-size:10px;color:var(--cyan);letter-spacing:.15em}.cap h3{margin:9px 0 6px}.cap p{margin:0;color:var(--muted);font-size:13px}.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}.tags span,.pill{font-size:10px;padding:4px 7px;border:1px solid #2d4763;border-radius:6px;color:#b6cce4;background:#102038}
-.lab{margin-top:62px;scroll-margin-top:90px}.lab-head{display:flex;justify-content:space-between;gap:15px;align-items:start;margin-bottom:18px}.lab-head h2{font-size:30px;margin:5px 0}.lab-head p{max-width:740px;color:var(--muted);margin:0}.num{font-size:34px;color:#385875;font-weight:800}.workbench{display:grid;grid-template-columns:1fr 1fr;gap:13px}.panel{padding:18px;min-width:0}.panel-title{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.12em;color:#c5d8ee;margin-bottom:16px}.label{display:block;font-size:12px;color:#b8c8dd;margin:12px 0 6px}input[type=text],input[type=number],select,textarea{width:100%;background:#081321;border:1px solid #2a405c;border-radius:8px;color:var(--ink);padding:10px 11px;outline:none}input:focus,select:focus,textarea:focus{border-color:#58c8ef;box-shadow:0 0 0 2px #58c8ef20}textarea{min-height:82px;resize:vertical}input[type=range]{width:100%;accent-color:var(--cyan)}input[type=checkbox]{accent-color:var(--cyan);width:auto}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions-sm{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.output{min-height:160px;max-height:360px;overflow:auto;white-space:pre-wrap;background:#07101c;border:1px solid #1e3047;border-radius:9px;padding:14px;color:#a8edcb;font:12px/1.65 ui-monospace,Consolas,monospace}.hint{font-size:11px;color:#8499b5;margin:10px 0 0}.sim{border:1px solid #66512e;background:#241c10;color:var(--amber);font-size:9px;letter-spacing:.12em;padding:4px 7px;border-radius:5px}.checkrow{display:flex;align-items:center;gap:8px;padding:7px 0;color:#c8d6e8;font-size:13px}.trace{display:grid;gap:8px}.trace-item{padding:11px;border:1px solid #2b415d;border-radius:8px;background:#0b1727}.trace-item small{color:var(--cyan);font-size:10px;letter-spacing:.1em}.trace-item b{display:block}.trace-item p{margin:4px 0 0;color:var(--muted);font-size:12px}.nodegraph{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;align-items:center}.node{padding:12px 5px;text-align:center;border:1px solid #335675;background:#0b1b2d;border-radius:8px;font-size:11px}.node small{display:block;color:var(--cyan);font-size:9px}.node.done{border-color:var(--green);box-shadow:0 0 14px #8be0b122}.diff{font:12px/1.6 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:#07101c;padding:12px;border-radius:8px;min-height:80px}.added{color:var(--green)}.removed{color:var(--red)}.bar{height:9px;background:#25364b;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,#35a3c9,#8be0b1);width:0}.preview{border:1px solid #324b68;border-radius:10px;padding:18px;background:#0a1727}.preview h3{margin:4px 0 8px}.preview-card{background:#172940;padding:12px;border-radius:8px}.kpis{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}.kpis div{flex:1;min-width:90px;padding:10px;background:#0b1727;border:1px solid #283e58;border-radius:8px}.kpis small{display:block;color:var(--muted);font-size:9px}.kpis b{font-size:20px;color:var(--cyan)}.footer{border-top:1px solid var(--line);padding:24px max(22px,calc((100% - 1240px)/2));color:var(--muted);font-size:11px;display:flex;justify-content:space-between;gap:10px}.toast{position:fixed;right:20px;bottom:20px;background:#17334c;border:1px solid #4c96ba;color:#eafaff;padding:11px 15px;border-radius:8px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:none}
-@media(max-width:900px){.top{flex-wrap:wrap}.nav{order:3;width:100%;justify-content:flex-start}.hero{grid-template-columns:1fr;padding-top:25px}.hero-art{min-height:230px}.capgrid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:640px){main{padding:24px 15px 55px}.top{padding:10px 14px}.status{display:none}.capgrid,.stats,.workbench{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.section-head,.lab-head{display:block}.num{font-size:22px}.nodegraph{grid-template-columns:1fr}.footer{display:block;padding:20px}.footer span{display:block;margin-top:6px}.nav button{padding:7px;font-size:11px}}
-
-/* === Visual system refinement === */
-:root{
-  --bg:#070b13;--panel:#0e1726;--panel2:#13243a;--line:#263b55;
-  --ink:#eef5ff;--muted:#a4b5cc;--cyan:#67ddff;--blue:#8095ff;
-  --green:#91e7bb;--amber:#ffd18b;--red:#ff9ba8;
-  --radius:16px;--shadow:0 18px 60px rgba(0,0,0,.24);
-}
-html{scroll-padding-top:94px}
-body{background-color:var(--bg);background-image:radial-gradient(ellipse at 80% -10%,rgba(30,98,139,.27),transparent 42%),radial-gradient(ellipse at 5% 40%,rgba(42,55,112,.12),transparent 38%)}
-body:after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.14;background-image:linear-gradient(rgba(119,168,209,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(119,168,209,.10) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(to bottom,black,transparent 78%)}
-a{transition:color .18s ease,border-color .18s ease,background .18s ease}
-button,input,select,textarea{font:inherit}
-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
-.skip-link{position:fixed;top:8px;left:8px;z-index:1000;padding:9px 13px;background:#eaf8ff;color:#08111d;border-radius:8px;transform:translateY(-150%);font-size:12px;font-weight:800}
-.skip-link:focus{transform:translateY(0)}
-.page-progress{position:fixed;inset:0 0 auto;height:3px;z-index:100;background:transparent}
-.page-progress span{display:block;width:0;height:100%;background:linear-gradient(90deg,#4e9dff,#63e2ff,#a0f0ce);box-shadow:0 0 12px #63d9ff80}
-.top{min-height:74px;padding-top:12px;padding-bottom:12px;background:rgba(7,12,21,.88);border-bottom-color:rgba(91,133,174,.23);box-shadow:0 8px 35px rgba(0,0,0,.14)}
-.brand{gap:12px;min-width:175px}
-.brand-mark{width:43px;height:43px;border-radius:13px;background:linear-gradient(145deg,#18324b,#0e1828);border-color:#4a9fc1;box-shadow:inset 0 0 22px #4dd9ff20,0 0 22px #4dd9ff12}
-.brand b{font-size:14px;letter-spacing:.22em}
-.brand small{font-size:9px;letter-spacing:.2em}
-.nav{gap:4px}
-.nav button{padding:8px 11px;border-radius:9px;font-weight:650;letter-spacing:.015em}
-.nav button.active{box-shadow:inset 0 0 18px #5ad6ff0b}
-.nav-toggle{display:none;border:1px solid var(--line);border-radius:9px;background:#102036;color:var(--ink);padding:9px 12px;font-size:11px;letter-spacing:.1em;font-weight:800}
-.nav-toggle span{margin-left:7px;color:var(--cyan)}
-.status{padding:7px 10px;border:1px solid #315044;border-radius:99px;background:#10271f;font-size:9px}
-main{padding-top:52px}
-.hero{min-height:430px;padding:54px 0 42px;position:relative}
-.hero>div:first-child{position:relative;z-index:1}
-.eyebrow,.kicker{font-weight:800;color:#7be3ff;letter-spacing:.2em}
-.hero h1{font-size:clamp(42px,6.4vw,76px);line-height:1.01;letter-spacing:-.06em;margin:20px 0 17px}
-.hero h1 em{background:linear-gradient(100deg,#73dfff 5%,#9aa9ff 58%,#b8f6e0);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{line-height:1.85;color:#c0ccdc;max-width:630px}
-.actions{gap:9px;margin:27px 0 20px}
-.btn{min-height:40px;padding:10px 15px;border-color:#385575;background:linear-gradient(145deg,#172b43,#122037);border-radius:10px;transition:transform .18s ease,filter .18s ease,border-color .18s ease}
-.btn:hover{filter:brightness(1.18);transform:translateY(-1px);border-color:#5d99ba}
-.btn.primary{background:linear-gradient(110deg,#176181,#2d438f);border-color:#5ab9dd;box-shadow:0 8px 25px #17618130}
-.hero-art{min-height:320px;isolation:isolate}
-.orb{background:radial-gradient(circle at 35% 28%,#17364e,#0a1423 68%);animation:corePulse 5s ease-in-out infinite}
-.orb:before{animation:orbitA 24s linear infinite}
-.orb:after{animation:orbitA 34s linear infinite reverse}
-.sat{box-shadow:0 8px 24px #0005;letter-spacing:.1em;text-transform:uppercase}
-.s1{animation:floatA 5s ease-in-out infinite}.s2{animation:floatA 6s ease-in-out -2s infinite}.s3{animation:floatA 7s ease-in-out -3s infinite}.s4{animation:floatA 5.5s ease-in-out -1s infinite}
-@keyframes corePulse{50%{box-shadow:0 0 85px #48bce955,inset 0 0 42px #48bce933}}
-@keyframes orbitA{to{rotate:360deg}}
-@keyframes floatA{50%{translate:0 -8px}}
-.stats{gap:12px;margin-bottom:64px}
-.stat{position:relative;overflow:hidden;padding:18px 20px;border-radius:13px;background:linear-gradient(140deg,rgba(20,39,63,.92),rgba(11,22,37,.94));box-shadow:0 10px 28px #0002}
-.stat:after{content:"";position:absolute;right:-24px;top:-35px;width:90px;height:90px;border:1px solid #6bdcff25;border-radius:50%;box-shadow:0 0 0 12px #6bdcff08,0 0 0 25px #6bdcff05}
-.stat b{font-size:27px;letter-spacing:-.04em}
-.stat span{font-size:10px;letter-spacing:.07em;text-transform:uppercase}
-.section-head{margin:62px 0 22px}
-.section-head h2,.lab-head h2{font-size:clamp(25px,3vw,34px);letter-spacing:-.035em}
-.section-head p,.lab-head p{line-height:1.8;font-size:13px}
-.capgrid{gap:14px}
-.cap{position:relative;overflow:hidden;min-height:176px;padding:21px 21px 19px;border-radius:15px;background:linear-gradient(145deg,rgba(19,37,60,.96),rgba(11,20,34,.98));box-shadow:0 12px 30px rgba(0,0,0,.14)}
-.cap:before{content:"";position:absolute;inset:0 auto 0 0;width:2px;background:linear-gradient(180deg,var(--cyan),transparent 82%);opacity:.55}
-.cap:after{content:"↗";position:absolute;right:18px;top:15px;color:#7398b9;font-size:15px;opacity:.7}
-.cap:hover{transform:translateY(-4px);border-color:#5799bf;box-shadow:0 18px 40px #0004,0 0 26px #41bce90d}
-.cap .num{font-size:9px;letter-spacing:.17em;color:#77dfff}
-.cap h3{font-size:17px;letter-spacing:-.02em;margin:12px 0 7px}
-.cap p{max-width:360px;line-height:1.7}
-.tags{gap:6px}
-.tags span,.pill{padding:4px 8px;border-color:#35506d;background:#102138;color:#bdd1e7;letter-spacing:.02em}
-.lab{margin-top:76px;padding-top:30px;border-top:1px solid rgba(83,123,161,.22);scroll-margin-top:94px}
-.lab-head{align-items:center;margin-bottom:21px}
-.lab-head h2{margin:8px 0 7px}
-.lab-head p{max-width:680px}
-.lab-head>.num{font-size:43px;color:#25425f;line-height:1}
-.workbench{gap:15px;align-items:stretch}
-.panel{padding:20px;border-radius:15px;background:linear-gradient(155deg,rgba(17,32,52,.98),rgba(11,20,34,.98));box-shadow:var(--shadow);border-color:#2a405b}
-.panel-title{padding-bottom:12px;border-bottom:1px solid rgba(91,132,173,.2);margin-bottom:15px;font-size:10px;font-weight:800;letter-spacing:.15em}
-.label{font-size:11px;font-weight:700;letter-spacing:.025em;color:#c5d5e7;margin:13px 0 7px}
-input[type=text],input[type=number],select,textarea{background:rgba(5,14,25,.8);border-color:#304863;border-radius:9px;padding:10px 12px;color:#eef6ff;min-height:41px;transition:border-color .15s,box-shadow .15s}
-textarea{line-height:1.6;min-height:90px}
-input[type=range]{accent-color:#68dcff;cursor:pointer}
-input[type=color]{width:100%;height:41px;background:#081321;border:1px solid #304863;border-radius:9px;padding:4px}
-.checkrow{padding:8px 10px;margin:3px 0;border:1px solid transparent;border-radius:8px;transition:background .15s,border-color .15s}
-.checkrow:hover{background:#12243a;border-color:#2c4967}
-.output,.diff{border:1px solid #263e5a;border-radius:10px;background:rgba(4,12,22,.82);padding:15px}
-.output{line-height:1.75}
-.trace-item{border-radius:10px;background:linear-gradient(120deg,#102137,#0b1727);border-color:#2c4663}
-.node{border-radius:9px;background:linear-gradient(145deg,#132b43,#0a192a);border-color:#3b5b7c;min-height:62px}
-.node.done{border-color:#8be0b1;box-shadow:0 0 18px #8be0b129}
-.preview{border-radius:12px;background:linear-gradient(145deg,#11243a,#091522);border-color:#35516e}
-.kpis div{border-radius:10px;background:#091626;border-color:#2d4562}
-.bar{background:#1d3047}
-.footer{padding-top:26px;padding-bottom:26px;border-color:#263b55}
-.footer a{color:#a9dff3}.footer a:hover{color:#fff}
-.toast{z-index:100;background:#15334a;border-color:#4e91b6;box-shadow:0 12px 35px #0008}
-@media(max-width:980px){
-  .top{gap:10px}
-  .brand{min-width:0}
-  .status{margin-left:auto}
-}
-@media(max-width:760px){
-  .top{display:flex;justify-content:space-between;flex-wrap:wrap;padding:10px 15px}
-  .nav-toggle{display:block}
-  .status{display:none}
-  .nav{display:none;order:4;width:100%;padding:8px 0 3px;justify-content:flex-start;border-top:1px solid #263b55}
-  .top.nav-open .nav{display:flex}
-  .nav button{flex:1 1 29%;text-align:center}
-  main{padding:25px 16px 58px}
-  .hero{min-height:0;padding:30px 0 18px;gap:4px}
-  .hero-art{min-height:245px}
-  .hero h1{font-size:clamp(39px,11vw,60px)}
-  .hero p{font-size:15px}
-  .stats{margin-bottom:48px}
-  .section-head{display:block;margin-top:48px}
-  .section-head p{margin-top:10px}
-  .lab{margin-top:56px;padding-top:24px}
-  .lab-head>.num{display:none}
-}
-@media(max-width:520px){
-  .capgrid{grid-template-columns:1fr}
-  .cap{min-height:0}
-  .workbench{grid-template-columns:1fr}
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-  .stat{padding:14px}
-  .stat b{font-size:23px}
-  .stat span{font-size:9px}
-  .grid2{grid-template-columns:1fr}
-  .nodegraph{grid-template-columns:1fr}
-  .nodegraph .node{min-height:0}
-  .actions .btn{flex:1 1 100%;text-align:center}
-  .footer{display:grid;gap:9px;padding:20px 16px}
-}
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
-}
-
-</style>
+<link rel="stylesheet" href="assets/demo.css">
 </head>
 <body>
 <a class="skip-link" href="#capabilities">Skip to content</a>
 <div class="page-progress" aria-hidden="true"><span id="pageProgressBar"></span></div>
 <header class="top">
-  <a class="brand" href="#home"><span class="brand-mark">D</span><span><b>DAVEN</b><small>AI ENGINEERING LAB</small></span></a>
+  <a class="brand" href="index.html"><span class="brand-mark">D</span><span><b>DAVEN</b><small>AI ENGINEERING LAB</small></span></a>
   <button class="nav-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="primaryNav">MENU <span aria-hidden="true">☰</span></button>
   <nav class="nav" id="primaryNav" aria-label="Demo navigation">
-    <button data-go="runtime">Runtime</button><button data-go="agents">Agents</button><button data-go="prompt">Prompt / RAG</button><button data-go="genai">GenAI</button><button data-go="devtools">Dev Tools</button><button data-go="product">Product</button>
+    <a class="active" href="index.html" aria-current="page">Home</a>
+    <a href="runtime.html">Runtime</a>
+    <a href="agents.html">Agents</a>
+    <a href="prompt-rag.html">Prompt / RAG</a>
+    <a href="genai-workflow.html">GenAI Workflow</a>
   </nav>
-  <span class="status"><i></i>PUBLIC DEMO / BUILD 01</span>
+  <span class="status"><i></i>PUBLIC DEMO / PORTFOLIO HUB</span>
 </header>
 <main id="home">
   <section class="hero">
-    <div><div class="eyebrow">SYSTEMS THINKING · AI ENGINEERING · PRODUCT BUILDING</div><h1>From AI tools<br>to <em>working systems.</em></h1><p>一個可操作的 AI Engineering 展示實驗室。把模型 Runtime、Agent 協作、知識檢索、生成式 AI、開發工具鏈與產品工程整合成六個可體驗的能力模組。</p><div class="actions"><a class="btn primary" href="#capabilities">Explore the lab ↘</a><a class="btn" href="#principles">Engineering principles</a><a class="btn" href="https://github.com/jlyay45684/Daven_Demo" target="_blank" rel="noopener noreferrer">View source ↗</a></div><div class="hint">INTERACTIVE FRONT-END DEMONSTRATIONS · NO API KEYS REQUIRED</div></div>
-    <div class="hero-art"><span class="sat s1">LLM</span><span class="sat s2">AGENT</span><span class="sat s3">RAG</span><span class="sat s4">PRODUCT</span><div class="orb">AI<small style="display:block;font-size:9px;letter-spacing:.2em">SYSTEM CORE</small></div></div>
+    <div><div class="eyebrow">SYSTEMS THINKING · AI ENGINEERING · PRODUCT BUILDING</div><h1>From AI tools<br>to <em>working systems.</em></h1><p>AI Engineering 作品集入口。將模型 Runtime、Agent 協作、知識檢索、生成式 AI 工作流與產品交付整合為四個可獨立體驗的 Demo 頁面。</p><div class="actions"><a class="btn primary" href="#capabilities">Explore demos ↘</a><a class="btn" href="#principles">Engineering principles</a><a class="btn" href="https://github.com/jlyay45684/Daven_Demo" target="_blank" rel="noopener noreferrer">View source ↗</a></div><div class="hint">PURE HTML / CSS / JS · INTERACTIVE FRONT-END DEMONSTRATIONS · NO API KEYS REQUIRED</div></div>
+    <div class="hero-art"><span class="sat s1">LLM</span><span class="sat s2">AGENT</span><span class="sat s3">RAG</span><span class="sat s4">GENAI</span><div class="orb">AI<small style="display:block;font-size:9px;letter-spacing:.2em">SYSTEM CORE</small></div></div>
   </section>
-  <section class="stats"><div class="stat"><b>06</b><span>Interactive domains</span></div><div class="stat"><b>25+</b><span>Tools & concepts mapped</span></div><div class="stat"><b>100%</b><span>Browser-side demo</span></div><div class="stat"><b>0</b><span>API keys exposed</span></div></section>
-  <section id="capabilities"><div class="section-head"><div><div class="kicker">01 / CAPABILITY MAP</div><h2>Engineering surface</h2></div><p>以工作流程和工程能力為單位，而不是逐一羅列工具名稱；每個模組都包含輸入、操作、狀態與可檢查的輸出。</p></div>
+  <section class="stats"><div class="stat"><b>04</b><span>Interactive demos</span></div><div class="stat"><b>06</b><span>Engineering capability areas</span></div><div class="stat"><b>100%</b><span>Browser-side demo</span></div><div class="stat"><b>0</b><span>API keys exposed</span></div></section>
+
+  <section id="capabilities"><div class="section-head"><div><div class="kicker">01 / DEMO ENTRANCE</div><h2>Four engineering demos</h2></div><p>以工作流程與工程能力為單位的獨立 HTML 展示。所有模擬行為均明確標示，不連線外部 AI 服務。</p></div>
     <div class="capgrid">
-      <a class="cap" href="#runtime"><span class="num">01 / MODEL INFRASTRUCTURE</span><h3>AI Runtime Lab</h3><p>本機與雲端模型路由、推論參數與 Runtime 配置。</p><div class="tags"><span>Ollama</span><span>Hugging Face</span><span>Groq</span></div></a>
-      <a class="cap" href="#agents"><span class="num">02 / ORCHESTRATION</span><h3>Agent Studio</h3><p>Agent 角色分工、任務編排、工具使用與交接。</p><div class="tags"><span>AI Agent</span><span>Multi-Agent</span><span>n8n</span><span>OpenClaw</span></div></a>
-      <a class="cap" href="#prompt"><span class="num">03 / KNOWLEDGE SYSTEMS</span><h3>Prompt & RAG Lab</h3><p>Prompt 組裝、約束設計、反向分析與知識檢索。</p><div class="tags"><span>Prompt</span><span>Negative</span><span>Reverse</span><span>Grill-me</span><span>RAG</span></div></a>
-      <a class="cap" href="#genai"><span class="num">04 / GENERATIVE PIPELINES</span><h3>GenAI Workflow Studio</h3><p>節點式生成流程、Checkpoint、LoRA 與取樣參數。</p><div class="tags"><span>ComfyUI</span><span>FLUX</span><span>SD</span><span>LoRA</span></div></a>
-      <a class="cap" href="#devtools"><span class="num">05 / SOFTWARE DELIVERY</span><h3>Developer Toolchain</h3><p>AI 輔助施工、CLI、Runtime、Git 與 Diff 審查。</p><div class="tags"><span>Kilo</span><span>Cline</span><span>Codex</span><span>GitHub</span><span>PowerShell</span></div></a>
-      <a class="cap" href="#product"><span class="num">06 / PRODUCT ENGINEERING</span><h3>Product Studio</h3><p>UI/UX 原型、CSV 數據分析、頁面組裝與 Android 發布。</p><div class="tags"><span>AI4BI</span><span>WordPress</span><span>Elementor</span><span>Android</span></div></a>
+      <a class="cap" href="runtime.html"><span class="num">01 / MODEL INFRASTRUCTURE</span><h3>AI Runtime Lab</h3><p>本機與雲端 LLM Runtime 配置：Provider、Endpoint/Model、Temperature、Max Tokens、模擬請求與 LOCAL/HOSTED 辨識，並整合開發環境與 Runtime 指令範例。</p><div class="tags"><span>Ollama</span><span>Hugging Face</span><span>Groq</span><span>Node.js</span><span>Git</span><span>PowerShell</span><span>SIMULATION</span></div></a>
+      <a class="cap" href="agents.html"><span class="num">02 / ORCHESTRATION</span><h3>Agent Studio</h3><p>AI Agent 與 Multi-Agent System：角色選擇、Objective、Workflow、Handoff Trace、執行狀態與完成報告；含 Git/GitHub 概念與 Diff Reviewer。</p><div class="tags"><span>AI Agent</span><span>Multi-Agent</span><span>n8n</span><span>OpenClaw</span><span>Kilo Code</span><span>Cline</span><span>Codex</span><span>SIMULATION</span></div></a>
+      <a class="cap" href="prompt-rag.html"><span class="num">03 / KNOWLEDGE SYSTEMS</span><h3>Prompt &amp; RAG Lab</h3><p>Prompt Engineering 與知識檢索：System/User/Negative/Reverse/Grill-me、Prompt 組裝與複製、知識片段管理與本機關鍵字檢索。</p><div class="tags"><span>Prompt</span><span>Negative</span><span>Reverse</span><span>Grill-me</span><span>Keyword Retrieval</span><span>LOCAL</span></div></a>
+      <a class="cap" href="genai-workflow.html"><span class="num">04 / GENERATIVE &amp; DELIVERY</span><h3>GenAI Workflow &amp; Product Delivery Studio</h3><p>ComfyUI-style 工作流、Checkpoint/LoRA/參數與 JSON 匯出；整合 UI/UX 原型、AI4BI CSV Explorer、Page Builder 概念與 Android 發布檢查清單。</p><div class="tags"><span>ComfyUI</span><span>FLUX</span><span>Stable Diffusion</span><span>LoRA</span><span>AI4BI</span><span>Elementor</span><span>Android</span><span>SIMULATION</span></div></a>
     </div>
   </section>
 
-  <section class="lab" id="runtime"><div class="lab-head"><div><div class="kicker">02 / MODEL INFRASTRUCTURE</div><h2>AI Runtime Lab</h2><p>設定模型服務端與推論參數，觀察本機 Runtime 與 Hosted Inference 的配置差異。</p></div><span class="num">01</span></div><div class="workbench">
-    <div class="panel"><div class="panel-title">INFERENCE CONFIGURATION <span class="sim">SIMULATED</span></div><label class="label">Provider<select id="provider"><option>Ollama</option><option>Hugging Face</option><option>Groq</option></select></label><label class="label">Model identifier<input id="model" type="text" value="qwen2.5:7b"></label><label class="label">Endpoint<input id="endpoint" type="text" value="http://localhost:11434"></label><div class="grid2"><div><label class="label">Temperature <output id="tempOut">0.7</output></label><input id="temp" type="range" min="0" max="1.5" step=".1" value=".7"></div><div><label class="label">Max tokens</label><input id="tokens" type="number" min="64" max="8192" value="1024"></div></div><label class="label">Prompt<textarea id="runtimePrompt">Explain how multi-agent collaboration can reduce single-agent failure risk.</textarea></label><div class="actions-sm"><button class="btn primary" id="runRuntime">Run inference simulation</button><button class="btn" id="resetRuntime">Reset</button></div><p class="hint">不會呼叫真實模型服務；此處示範 Runtime 配置與路由概念。不要將 API Key 放入公開前端。</p></div>
-    <div class="panel"><div class="panel-title">RUNTIME CONSOLE <span class="pill" id="runtimeState">IDLE</span></div><div class="kpis"><div><small>PROVIDER</small><b id="providerOut">Ollama</b></div><div><small>MODE</small><b id="modeOut">LOCAL</b></div><div><small>CONTEXT</small><b id="contextOut">1024</b></div></div><div class="output" id="runtimeOutput">// Awaiting request…</div><div class="tags"><span>Prompt</span><span>Router</span><span>Runtime</span><span>Model</span><span>Response</span></div></div>
-  </div></section>
+  <section id="upcoming" class="lab"><div class="section-head"><div><div class="kicker">02 / UPCOMING SHOWCASES</div><h2>Future visual works</h2></div><p>規劃中之獨立部署超級視覺作品，本次僅保留展示位置（Coming Soon），不建立連結或複製未來功能。</p></div>
+    <div class="capgrid" style="grid-template-columns:repeat(2,1fr)">
+      <div class="cap disabled" aria-disabled="true"><span class="num">COMING SOON</span><h3>NEXUS — AI Agent Command Center <span class="badge-soon">COMING SOON</span></h3><p>未來獨立部署的 AI Agent 指揮中心視覺展示。尚未整合至本作品集。</p><div class="tags"><span>Planned</span><span>Independent Deploy</span></div></div>
+      <div class="cap disabled" aria-disabled="true"><span class="num">COMING SOON</span><h3>SYNTHESIS — GenAI Node Studio <span class="badge-soon">COMING SOON</span></h3><p>未來獨立部署的 GenAI 節點工作室視覺展示。尚未整合至本作品集。</p><div class="tags"><span>Planned</span><span>Independent Deploy</span></div></div>
+    </div>
+  </section>
 
-  <section class="lab" id="agents"><div class="lab-head"><div><div class="kicker">03 / ORCHESTRATION</div><h2>Agent Studio</h2><p>用明確角色與交接點展示多 Agent 工作流的設計方式。</p></div><span class="num">02</span></div><div class="workbench">
-    <div class="panel"><div class="panel-title">TASK DEFINITION <span class="sim">SIMULATED</span></div><label class="label">Objective<textarea id="objective">Design a secure RAG assistant for an internal knowledge base.</textarea></label><div id="agentChoices">
-      <label class="checkrow"><input type="checkbox" value="Planner" checked> Planner — 拆解目標與限制</label><label class="checkrow"><input type="checkbox" value="Researcher" checked> Researcher — 搜集依據與假設</label><label class="checkrow"><input type="checkbox" value="Builder" checked> Builder — 設計實作路徑</label><label class="checkrow"><input type="checkbox" value="Critic" checked> Critic — 尋找失效模式</label><label class="checkrow"><input type="checkbox" value="Validator" checked> Validator — 驗證輸出與驗收條件</label><label class="checkrow"><input type="checkbox" value="Operator"> Operator — 部署、監控與回滾</label></div><div class="actions-sm"><button class="btn primary" id="runAgents">Run workflow simulation</button><button class="btn" id="resetAgents">Reset</button></div><p class="hint">這是前端協作流程示範，不會呼叫外部 Agent、LLM 或 n8n。</p></div>
-    <div class="panel"><div class="panel-title">ORCHESTRATION TRACE <span class="pill" id="agentState">READY</span></div><div class="trace" id="agentTrace"><div class="hint">選擇角色並執行工作流，以檢視任務序列與交接紀錄。</div></div></div>
-  </div></section>
-
-  <section class="lab" id="prompt"><div class="lab-head"><div><div class="kicker">04 / KNOWLEDGE SYSTEMS</div><h2>Prompt & RAG Lab</h2><p>以欄位化 Prompt 與可追溯的知識片段，示範提示詞組裝和本機檢索流程。</p></div><span class="num">03</span></div><div class="workbench">
-    <div class="panel"><div class="panel-title">PROMPT BUILDER <span class="pill">LOCAL</span></div><label class="label">System prompt<textarea id="systemPrompt">You are a precise technical assistant. Use evidence and state uncertainty.</textarea></label><label class="label">User prompt<textarea id="userPrompt">Explain why runtime secrets should not be embedded in frontend code.</textarea></label><label class="label">Negative prompt / constraints<textarea id="negativePrompt">Do not invent API responses. Do not expose credentials. Separate facts from assumptions.</textarea></label><label class="label">Reverse prompt / Grill-me questions<textarea id="reversePrompt">Identify assumptions, missing evidence, failure modes, and testable claims.</textarea></label><div class="actions-sm"><button class="btn primary" id="assemblePrompt">Assemble prompt</button><button class="btn" id="copyPrompt">Copy output</button></div><div class="output" id="assembledPrompt">// Prompt output will appear here.</div></div>
-    <div class="panel"><div class="panel-title">LOCAL KNOWLEDGE RETRIEVAL <span class="pill">KEYWORD SEARCH</span></div><label class="label">Knowledge fragment<textarea id="knowledgeInput" placeholder="貼上一段知識或文件內容…"></textarea></label><div class="actions-sm"><button class="btn" id="addKnowledge">Add fragment</button><button class="btn" id="sampleKnowledge">Load sample set</button><button class="btn" id="clearKnowledge">Clear</button></div><div id="knowledgeCount" class="hint">0 fragments loaded</div><label class="label">Retrieval query<input id="retrievalQuery" type="text" value="API key frontend security"></label><button class="btn primary" id="runRetrieval">Search knowledge</button><div id="retrievalResults" class="trace" style="margin-top:12px"><div class="hint">檢索結果將顯示於此。</div></div><p class="hint">使用瀏覽器本機關鍵字重疊示範，不是向量 Embedding 或正式向量資料庫。</p></div>
-  </div></section>
-
-  <section class="lab" id="genai"><div class="lab-head"><div><div class="kicker">05 / GENERATIVE PIPELINES</div><h2>GenAI Workflow Studio</h2><p>用節點式架構理解 ComfyUI、Checkpoint、LoRA、Sampler 與輸出之間的資料流。</p></div><span class="num">04</span></div><div class="workbench">
-    <div class="panel"><div class="panel-title">GENERATION PARAMETERS <span class="sim">SIMULATED</span></div><label class="label">Model family<select id="genModel"><option>FLUX</option><option>Stable Diffusion XL</option><option>Stable Diffusion 1.5</option></select></label><label class="label">Checkpoint<input id="checkpoint" type="text" value="flux1-dev.safetensors"></label><label class="label">LoRA profile<select id="lora"><option>No LoRA</option><option>Cinematic detail · 0.75</option><option>Character consistency · 0.65</option><option>Product photography · 0.70</option></select></label><label class="label">Positive prompt<textarea id="positive">Futuristic AI engineering laboratory, clean industrial design, cinematic cyan light, detailed composition.</textarea></label><label class="label">Negative prompt<textarea id="negative">low quality, blurry, distorted geometry, watermark</textarea></label><div class="grid2"><div><label class="label">Steps</label><input id="steps" type="number" value="28" min="1" max="100"></div><div><label class="label">CFG / Guidance</label><input id="cfg" type="number" value="3.5" min="1" max="20" step=".5"></div></div><div class="actions-sm"><button class="btn primary" id="runGen">Simulate node workflow</button><button class="btn" id="exportGen">Export workflow JSON</button></div><p class="hint">不會載入模型或生成真實圖片；真正的推論需要 ComfyUI Runtime 與模型權重。</p></div>
-    <div class="panel"><div class="panel-title">NODE GRAPH <span class="pill" id="genState">IDLE</span></div><div class="nodegraph" id="nodeGraph"><div class="node"><small>01 / INPUT</small>Text Encode</div><div class="node"><small>02 / MODEL</small>Checkpoint</div><div class="node"><small>03 / ADAPTER</small>LoRA</div><div class="node"><small>04 / SAMPLE</small>KSampler</div><div class="node"><small>05 / OUTPUT</small>VAE Decode</div></div><div class="output" id="genLog" style="margin-top:13px">// Workflow not executed.</div><div class="preview" id="genPreview" style="margin-top:12px"><b>Output preview</b><p class="hint">Simulation only — no image generated.</p></div></div>
-  </div></section>
-
-  <section class="lab" id="devtools"><div class="lab-head"><div><div class="kicker">06 / SOFTWARE DELIVERY</div><h2>Developer Toolchain</h2><p>將 AI Coding、CLI、Git 版本控制與 Diff 審查整合成一個工程工作台。</p></div><span class="num">05</span></div><div class="workbench">
-    <div class="panel"><div class="panel-title">COMMAND PLAYBOOK <span class="pill">REFERENCE</span></div><label class="label">Environment<select id="shell"><option value="powershell">PowerShell</option><option value="cmd">Windows CMD</option><option value="bash">Ubuntu / Bash</option><option value="bat">Windows Batch</option></select></label><div class="kpis"><div><small>AI CODING</small><b>Kilo / Cline</b></div><div><small>REVIEW</small><b>Codex</b></div></div><div class="preview"><b id="commandTitle">Inspect development tools</b><pre id="commandText" style="white-space:pre-wrap;color:#a8edcb;font-size:12px">node --version
-npm --version
-git --version</pre><p class="hint" id="commandNote">確認常用開發工具是否可用。</p><button class="btn" id="copyCommand">Copy command</button></div><div class="tags"><span>Runtime</span><span>Skills</span><span>CLI</span><span>Git / GitHub</span><span>Android Studio</span><span>Anaconda</span></div></div>
-    <div class="panel"><div class="panel-title">DIFF REVIEWER <span class="pill">LOCAL</span></div><label class="label">Before<textarea id="before">const retries = 3;
-const timeout = 5000;
-
-function connect() {
-  return request(timeout);
-}</textarea></label><label class="label">After<textarea id="after">const retries = 5;
-const timeout = 8000;
-
-function connect() {
-  return request(timeout, retries);
-}</textarea></label><div class="actions-sm"><button class="btn primary" id="compareDiff">Compare changes</button><button class="btn" id="resetDiff">Reset example</button></div><div class="diff" id="diffOutput">執行 Compare 以顯示差異。</div></div>
-  </div></section>
-
-  <section class="lab" id="product"><div class="lab-head"><div><div class="kicker">07 / PRODUCT DELIVERY</div><h2>Product Studio</h2><p>從 UI/UX 原型、AI4BI 資料分析、頁面組裝到 Android 發布驗收。</p></div><span class="num">06</span></div><div class="workbench">
-    <div class="panel"><div class="panel-title">UI / UX LIVE PROTOTYPE <span class="pill">INTERACTIVE</span></div><label class="label">Product title<input id="productTitle" type="text" value="NEXUS — AI Workspace"></label><div class="grid2"><div><label class="label">Accent color</label><input id="productColor" type="color" value="#63d9ff"></div><div><label class="label">Layout</label><select id="productLayout"><option value="wide">Desktop</option><option value="mobile">Mobile</option></select></div></div><div class="preview" id="prototype"><small>AI WORKSPACE / OVERVIEW</small><h3 id="prototypeTitle">NEXUS — AI Workspace</h3><p>Bring your models, agents and knowledge into one workflow.</p><div class="kpis"><div><small>MODEL ROUTER</small><b>03</b></div><div><small>ACTIVE AGENTS</small><b>05</b></div><div><small>KNOWLEDGE</small><b>12</b></div></div><button class="btn primary" id="prototypeAction">Open workspace</button><span id="prototypeFeedback" class="hint"></span></div></div>
-    <div class="panel"><div class="panel-title">AI4BI DATA EXPLORER <span class="pill">LOCAL CSV</span></div><label class="label">CSV (category,value)</label><textarea id="csv">category,value
-AI Projects,12
-Automation,8
-Data Apps,6
-Prototypes,10</textarea><div class="actions-sm"><button class="btn primary" id="analyzeCsv">Analyze dataset</button><button class="btn" id="sampleCsv">Load sample</button></div><div id="biOutput" class="trace" style="margin-top:12px"><div class="hint">資料只在瀏覽器中處理。</div></div></div>
-    <div class="panel"><div class="panel-title">PAGE BUILDER / ELEMENTOR CONCEPT <span class="pill">WIREFRAME</span></div><div class="actions-sm"><button class="btn builder active" data-block="hero">Hero</button><button class="btn builder" data-block="features">Features</button><button class="btn builder" data-block="cta">CTA</button></div><div id="builderPreview" class="preview" style="margin-top:12px"><small>HERO SECTION</small><h3>Build a better digital workflow.</h3><p>Compose sections, test hierarchy and refine the responsive experience.</p></div><p class="hint">以 Elementor 的 Section / Container / Widget 思路示意，不會修改 WordPress 網站。</p></div>
-    <div class="panel"><div class="panel-title">ANDROID RELEASE CHECKLIST <span class="pill">BUILD FLOW</span></div><div class="kpis"><div><small>READINESS</small><b id="releasePercent">0%</b></div><div><small>CHECKS</small><b id="releaseCount">0 / 6</b></div></div><div class="bar"><i id="releaseBar"></i></div><div id="releaseChecks"><label class="checkrow"><input type="checkbox"> Application ID / package name verified</label><label class="checkrow"><input type="checkbox"> Version code and version name updated</label><label class="checkrow"><input type="checkbox"> Debug build installed and smoke-tested</label><label class="checkrow"><input type="checkbox"> Release signing configuration checked</label><label class="checkrow"><input type="checkbox"> Permissions and privacy disclosures reviewed</label><label class="checkrow"><input type="checkbox"> APK / AAB artifact archived</label></div><p class="hint">清單只追蹤驗收狀態，不會執行 Gradle Build。</p></div>
-  </div></section>
-
-  <section id="principles"><div class="section-head"><div><div class="kicker">08 / ENGINEERING PRINCIPLES</div><h2>Build with evidence. Ship with control.</h2></div><p>可替換的模組、可檢查的假設、明確的執行邊界與可驗收的交付物。</p></div><div class="capgrid"><div class="cap"><span class="num">01</span><h3>Modular architecture</h3><p>Separate responsibilities, define boundaries, and keep components replaceable.</p></div><div class="cap"><span class="num">02</span><h3>Human-governed AI</h3><p>Make assumptions, tool boundaries, and validation steps visible.</p></div><div class="cap"><span class="num">03</span><h3>Artifact quality</h3><p>Verify that delivered files exist, work, and match the intended use.</p></div></div></section>
+  <section id="principles"><div class="section-head"><div><div class="kicker">03 / ENGINEERING PRINCIPLES</div><h2>Build with evidence. Ship with control.</h2></div><p>可替換的模組、可檢查的假設、明確的執行邊界與可驗收的交付物。</p></div><div class="capgrid"><div class="cap"><span class="num">01</span><h3>Modular architecture</h3><p>Separate responsibilities, define boundaries, and keep components replaceable.</p></div><div class="cap"><span class="num">02</span><h3>Human-governed AI</h3><p>Make assumptions, tool boundaries, and validation steps visible.</p></div><div class="cap"><span class="num">03</span><h3>Artifact quality</h3><p>Verify that delivered files exist, work, and match the intended use.</p></div></div></section>
 </main>
 <footer class="footer"><b>DAVEN / AI ENGINEERING LAB</b><span>Independent portfolio demonstration · 2026</span><span><a href="https://github.com/jlyay45684/Daven_Demo" target="_blank" rel="noopener noreferrer">Source repository ↗</a>　·　<a href="#home">Back to top ↑</a></span></footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script>
-(function(){
- const $=id=>document.getElementById(id), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
- const toast=msg=>{const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2100)};
- const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
- document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>document.getElementById(b.dataset.go).scrollIntoView({behavior:'smooth'})));
- const sections=['runtime','agents','prompt','genai','devtools','product'];
- const navObserver=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('[data-go]').forEach(b=>b.classList.toggle('active',b.dataset.go===e.target.id));}}),{rootMargin:'-25% 0px -65% 0px'});
- sections.forEach(id=>navObserver.observe($(id)));
- $('temp').addEventListener('input',()=>{$('tempOut').textContent=$('temp').value});
- $('provider').addEventListener('change',()=>{const p=$('provider').value;const local=p==='Ollama';$('endpoint').value=local?'http://localhost:11434':p==='Groq'?'https://api.groq.com/openai/v1':'https://api-inference.huggingface.co';$('model').value=local?'qwen2.5:7b':p==='Groq'?'llama-3.3-70b-versatile':'meta-llama/Meta-Llama-3-8B-Instruct';$('providerOut').textContent=p;$('modeOut').textContent=local?'LOCAL':'HOSTED';});
- $('runRuntime').addEventListener('click',()=>{const p=$('provider').value,m=$('model').value.trim(),prompt=$('runtimePrompt').value.trim();if(!m||!prompt){toast('Model 與 Prompt 不可空白');return;}const local=p==='Ollama';$('runtimeState').textContent='SIMULATED';$('providerOut').textContent=p;$('modeOut').textContent=local?'LOCAL':'HOSTED';$('contextOut').textContent=Math.max(64,Number($('tokens').value)||1024).toLocaleString();$('runtimeOutput').textContent='[SIMULATION ONLY]\nProvider: '+p+'\nModel: '+m+'\nEndpoint: '+$('endpoint').value+'\nTemperature: '+$('temp').value+'\nMax tokens: '+$('contextOut').textContent+'\n\nRequest accepted by the demo interface. No HTTP request was sent and no model was invoked.\n\nSuggested architecture: Browser UI → secure backend / local runtime adapter → provider → normalized response.';});
- $('resetRuntime').addEventListener('click',()=>{ $('provider').value='Ollama';$('provider').dispatchEvent(new Event('change'));$('temp').value='.7';$('temp').dispatchEvent(new Event('input'));$('tokens').value='1024';$('runtimePrompt').value='Explain how multi-agent collaboration can reduce single-agent failure risk.';$('runtimeState').textContent='IDLE';$('runtimeOutput').textContent='// Awaiting request…';});
- $('runAgents').addEventListener('click',async()=>{const roles=[...$('agentChoices').querySelectorAll('input:checked')].map(x=>x.value);const goal=$('objective').value.trim();if(!goal||!roles.length){toast('請輸入目標並至少選擇一個角色');return;}const host=$('agentTrace');host.innerHTML='';$('agentState').textContent='RUNNING';for(let i=0;i<roles.length;i++){const item=document.createElement('div');item.className='trace-item';item.innerHTML='<small>STAGE 0'+(i+1)+' / '+esc(roles[i].toUpperCase())+'</small><b>'+esc(roles[i])+'</b><p>Objective handoff: '+esc(goal.slice(0,180))+'</p><p>Status: simulated role output prepared for next stage.</p>';host.appendChild(item);await pause(260);} $('agentState').textContent='SIMULATED';const summary=document.createElement('div');summary.className='trace-item';summary.innerHTML='<small>WORKFLOW COMPLETE</small><b>'+roles.length+' roles traversed</b><p>Next governance step: merge outputs, resolve disagreement, and run an independent validation gate. No external Agent was invoked.</p>';host.appendChild(summary);});
- $('resetAgents').addEventListener('click',()=>{$('agentTrace').innerHTML='<div class="hint">選擇角色並執行工作流，以檢視任務序列與交接紀錄。</div>';$('agentState').textContent='READY'});
- const pids=['systemPrompt','userPrompt','negativePrompt','reversePrompt'];
- $('assemblePrompt').addEventListener('click',()=>{$('assembledPrompt').textContent=[['SYSTEM',$('systemPrompt').value],['USER',$('userPrompt').value],['NEGATIVE / CONSTRAINTS',$('negativePrompt').value],['REVERSE / GRILL-ME',$('reversePrompt').value]].map(x=>'### '+x[0]+'\n'+(x[1].trim()||'(empty)')).join('\n\n');toast('Prompt 已在本機組裝');});
- $('copyPrompt').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('assembledPrompt').textContent);toast('Prompt copied');}catch(e){toast('Clipboard permission unavailable')}});
- let knowledge=[];
- const renderKnowledge=()=>{$('knowledgeCount').textContent=knowledge.length+' fragments loaded';};
- $('addKnowledge').addEventListener('click',()=>{const v=$('knowledgeInput').value.trim();if(!v){toast('請先輸入知識片段');return;}knowledge.push(v);$('knowledgeInput').value='';renderKnowledge();});
- $('sampleKnowledge').addEventListener('click',()=>{knowledge=['Never expose provider API keys in browser code. Store secrets in environment variables on a trusted backend.','Ollama provides a local model runtime. The client application can call a local service in a controlled development environment.','Retrieval augmented generation combines a query with relevant external context. Retrieved passages should retain source references.','A multi-agent workflow should define role boundaries, handoff contracts, validation, and rollback behavior.'];renderKnowledge();});
- $('clearKnowledge').addEventListener('click',()=>{knowledge=[];renderKnowledge();$('retrievalResults').innerHTML='<div class="hint">Knowledge store cleared.</div>'});
- $('runRetrieval').addEventListener('click',()=>{const terms=$('retrievalQuery').value.toLowerCase().split(/[^a-z0-9\u00C0-\uFFFF]+/i).filter(x=>x.length>1);const ranked=knowledge.map((text,i)=>({text,i,score:terms.filter(t=>text.toLowerCase().includes(t)).length})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score);$('retrievalResults').innerHTML=ranked.length?ranked.map(x=>'<div class="trace-item"><small>FRAGMENT '+(x.i+1)+' · MATCH '+x.score+'/'+Math.max(1,terms.length)+'</small><p>'+esc(x.text)+'</p></div>').join(''):'<div class="hint">No keyword matches. Add context or revise the query.</div>'});
- $('runGen').addEventListener('click',async()=>{const nodes=[...$('nodeGraph').children];nodes.forEach(n=>n.classList.remove('done'));$('genState').textContent='RUNNING';const log=[];for(const n of nodes){n.classList.add('done');log.push('✓ '+n.textContent.replace(/\s+/g,' ').trim()+' — simulated');$('genLog').textContent=log.join('\n');await pause(250);} $('genState').textContent='SIMULATED';$('genPreview').innerHTML='<b>Workflow graph completed</b><p class="hint">Configuration trace only. No checkpoint was loaded and no image was generated.</p><p class="hint">Model: '+esc($('genModel').value)+' · LoRA: '+esc($('lora').value)+'</p>';});
- $('exportGen').addEventListener('click',()=>{const data={model:$('genModel').value,checkpoint:$('checkpoint').value,lora:$('lora').value,positive:$('positive').value,negative:$('negative').value,steps:Number($('steps').value),cfg:Number($('cfg').value),notice:'Configuration only; no image inference has been executed.'};download('genai-workflow.json',JSON.stringify(data,null,2),'application/json')});
- const commandSets={powershell:{title:'Inspect development tools',cmd:'node --version\nnpm --version\ngit --version',note:'確認 Node.js、npm 與 Git 是否已加入 PATH。'},cmd:{title:'Inspect project files',cmd:'dir\ntree /F\ngit status --short',note:'檢查檔案樹與 Git 工作目錄狀態。'},bash:{title:'Inspect Ubuntu environment',cmd:'uname -a\npython3 --version\ngit status --short',note:'確認 Linux 環境、Python 與版本控制狀態。'},bat:{title:'Windows setup check',cmd:'@echo off\nnode --version\ngit --version\nif errorlevel 1 echo Check installation and PATH\npause',note:'Batch 腳本範例；執行前先確認命令來源與副作用。'}};
- $('shell').addEventListener('change',()=>{const x=commandSets[$('shell').value];$('commandTitle').textContent=x.title;$('commandText').textContent=x.cmd;$('commandNote').textContent=x.note;});
- $('copyCommand').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('commandText').textContent);toast('Command copied');}catch(e){toast('Clipboard permission unavailable')}});
- const beforeDefault=$('before').value,afterDefault=$('after').value;
- $('compareDiff').addEventListener('click',()=>{const a=$('before').value.split('\n'),b=$('after').value.split('\n'),out=[];for(let i=0;i<Math.max(a.length,b.length);i++){if(a[i]===b[i])out.push('  '+esc(a[i]||''));else{if(a[i]!==undefined)out.push('<span class="removed">- '+esc(a[i])+'</span>');if(b[i]!==undefined)out.push('<span class="added">+ '+esc(b[i])+'</span>');}}$('diffOutput').innerHTML=out.join('\n')||'No differences.';});
- $('resetDiff').addEventListener('click',()=>{$('before').value=beforeDefault;$('after').value=afterDefault;$('diffOutput').textContent='執行 Compare 以顯示差異。'});
- function updatePrototype(){$('prototypeTitle').textContent=$('productTitle').value;$('prototype').style.borderColor=$('productColor').value;$('prototype').style.maxWidth=$('productLayout').value==='mobile'?'360px':'none';}
- ['productTitle','productColor','productLayout'].forEach(id=>$(id).addEventListener('input',updatePrototype));$('prototypeAction').addEventListener('click',()=>{$('prototypeFeedback').textContent=' · Prototype interaction confirmed.'});updatePrototype();
- $('analyzeCsv').addEventListener('click',()=>{const lines=$('csv').value.trim().split(/\r?\n/);if(lines.length<2){$('biOutput').innerHTML='<div class="hint">CSV needs a header and at least one row.</div>';return;}const h=lines.shift().split(',').map(x=>x.trim().toLowerCase()),ci=h.indexOf('category'),vi=h.indexOf('value');if(ci<0||vi<0){$('biOutput').innerHTML='<div class="hint">Expected columns: category,value</div>';return;}const rows=lines.map(line=>{const x=line.split(',');return{category:(x[ci]||'').trim(),value:Number(x[vi])}}).filter(x=>x.category&&Number.isFinite(x.value));if(!rows.length){$('biOutput').innerHTML='<div class="hint">No valid numeric rows.</div>';return;}const total=rows.reduce((s,x)=>s+x.value,0),avg=total/rows.length,max=Math.max(...rows.map(x=>x.value));$('biOutput').innerHTML='<div class="kpis"><div><small>ROWS</small><b>'+rows.length+'</b></div><div><small>TOTAL</small><b>'+total+'</b></div><div><small>AVERAGE</small><b>'+avg.toFixed(1)+'</b></div></div>'+rows.map(x=>'<div class="checkrow">'+esc(x.category)+' <span style="flex:1" class="bar"><i style="width:'+Math.max(2,x.value/max*100)+'%"></i></span> '+x.value+'</div>').join('');});
- $('sampleCsv').addEventListener('click',()=>{$('csv').value='category,value\nAI Projects,12\nAutomation,8\nData Apps,6\nPrototypes,10';$('analyzeCsv').click()});
- const pageBlocks={hero:['HERO SECTION','Build a better digital workflow.','Compose sections, test content hierarchy, and refine the responsive experience.'],features:['FEATURES SECTION','One workspace. Multiple capabilities.','Connect runtime, agent workflows and knowledge tools through modular building blocks.'],cta:['CALL TO ACTION','Ready to build your next system?','Turn an idea into a testable prototype with measurable acceptance criteria.']};
- document.querySelectorAll('.builder').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.builder').forEach(x=>x.classList.toggle('active',x===b));const c=pageBlocks[b.dataset.block];$('builderPreview').innerHTML='<small>'+c[0]+'</small><h3>'+c[1]+'</h3><p>'+c[2]+'</p>';}));
- const release=[...$('releaseChecks').querySelectorAll('input')];function updateRelease(){const done=release.filter(x=>x.checked).length,p=Math.round(done/release.length*100);$('releasePercent').textContent=p+'%';$('releaseCount').textContent=done+' / '+release.length;$('releaseBar').style.width=p+'%';}release.forEach(x=>x.addEventListener('change',updateRelease));updateRelease();
- function download(name,text,type){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([text],{type:type||'text/plain'}));a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
- // Shared shell: mobile navigation, reading progress and keyboard escape.
- const menuToggle=$('menuToggle');
- if(menuToggle){
-   menuToggle.addEventListener('click',()=>{
-     const open=document.querySelector('.top').classList.toggle('nav-open');
-     menuToggle.setAttribute('aria-expanded',String(open));
-     menuToggle.innerHTML=open?'CLOSE <span aria-hidden="true">×</span>':'MENU <span aria-hidden="true">☰</span>';
-   });
-   document.querySelectorAll('#primaryNav [data-go]').forEach(button=>button.addEventListener('click',()=>{
-     document.querySelector('.top').classList.remove('nav-open');
-     menuToggle.setAttribute('aria-expanded','false');
-     menuToggle.innerHTML='MENU <span aria-hidden="true">☰</span>';
-   }));
-   document.addEventListener('keydown',event=>{
-     if(event.key==='Escape'){
-       document.querySelector('.top').classList.remove('nav-open');
-       menuToggle.setAttribute('aria-expanded','false');
-       menuToggle.innerHTML='MENU <span aria-hidden="true">☰</span>';
-     }
-   });
- }
- const progressBar=$('pageProgressBar');
- const updatePageProgress=()=>{
-   const root=document.documentElement;
-   const available=root.scrollHeight-root.clientHeight;
-   const percent=available>0?(root.scrollTop/available)*100:0;
-   if(progressBar)progressBar.style.width=Math.min(100,Math.max(0,percent))+'%';
- };
- window.addEventListener('scroll',updatePageProgress,{passive:true});
- window.addEventListener('resize',updatePageProgress);
- updatePageProgress();
-
-})();
-</script>
+<script src="assets/common.js" defer></script>
 </body>
 </html>
