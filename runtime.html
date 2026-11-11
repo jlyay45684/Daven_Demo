@@ -1,0 +1,49 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080d18">
+<meta name="description" content="AI Runtime Lab — 本機與雲端 LLM Runtime 配置與開發工具鏈展示 (SIMULATION)。">
+<title>AI Runtime Lab | Daven Demo</title>
+<link rel="stylesheet" href="assets/demo.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="page-progress" aria-hidden="true"><span id="pageProgressBar"></span></div>
+<header class="top">
+  <a class="brand" href="index.html"><span class="brand-mark">D</span><span><b>DAVEN</b><small>AI ENGINEERING LAB</small></span></a>
+  <button class="nav-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="primaryNav">MENU <span aria-hidden="true">☰</span></button>
+  <nav class="nav" id="primaryNav" aria-label="Demo navigation">
+    <a href="index.html">Home</a>
+    <a class="active" href="runtime.html" aria-current="page">Runtime</a>
+    <a href="agents.html">Agents</a>
+    <a href="prompt-rag.html">Prompt / RAG</a>
+    <a href="genai-workflow.html">GenAI Workflow</a>
+  </nav>
+  <span class="status"><i></i>SIMULATION / RUNTIME LAB</span>
+</header>
+<main id="main">
+  <a class="back-link" href="index.html">← Back to Portfolio</a>
+  <div class="kicker">01 / AI RUNTIME LAB</div>
+  <h1 style="margin:8px 0 6px;font-size:clamp(28px,4vw,40px);letter-spacing:-.04em">本機與雲端 LLM Runtime 配置</h1>
+  <p class="page-intro">設定模型服務端與推論參數，觀察本機 Runtime 與 Hosted Inference 的配置差異，並整合開發環境與 Runtime 檢查指令。所有模型呼叫皆為 <strong>SIMULATION</strong>，不會真的連線或推論。</p>
+
+  <section class="lab" id="runtime"><div class="lab-head"><div><div class="kicker">MODEL INFRASTRUCTURE</div><h2>AI Runtime Lab</h2><p>Provider 選擇、Endpoint / Model 設定、Temperature 與 Max Tokens、Runtime Configuration、模擬請求與輸出結果、LOCAL / HOSTED 狀態辨識。</p></div><span class="num">01</span></div><div class="workbench">
+    <div class="panel"><div class="panel-title">INFERENCE CONFIGURATION <span class="sim">SIMULATED</span></div><label class="label" for="provider">Provider<select id="provider"><option>Ollama</option><option>Hugging Face</option><option>Groq</option></select></label><label class="label" for="model">Model identifier<input id="model" type="text" value="qwen2.5:7b"></label><label class="label" for="endpoint">Endpoint<input id="endpoint" type="text" value="http://localhost:11434"></label><div class="grid2"><div><label class="label" for="temp">Temperature <output id="tempOut">0.7</output></label><input id="temp" type="range" min="0" max="1.5" step=".1" value=".7"></div><div><label class="label" for="tokens">Max tokens</label><input id="tokens" type="number" min="64" max="8192" value="1024"></div></div><label class="label" for="runtimePrompt">Prompt<textarea id="runtimePrompt">Explain how multi-agent collaboration can reduce single-agent failure risk.</textarea></label><div class="actions-sm"><button class="btn primary" id="runRuntime" type="button">Run inference simulation</button><button class="btn" id="resetRuntime" type="button">Reset</button></div><p class="hint">不會呼叫真實模型服務；此處示範 Runtime 配置與路由概念。不要將 API Key 放入公開前端。</p></div>
+    <div class="panel"><div class="panel-title">RUNTIME CONSOLE <span class="pill" id="runtimeState">IDLE</span></div><div class="kpis"><div><small>PROVIDER</small><b id="providerOut">Ollama</b></div><div><small>MODE</small><b id="modeOut">LOCAL</b></div><div><small>CONTEXT</small><b id="contextOut">1024</b></div></div><div class="output" id="runtimeOutput" aria-live="polite">// Awaiting request…</div><div class="tags"><span>Prompt</span><span>Router</span><span>Runtime</span><span>Model</span><span>Response</span></div></div>
+  </div></section>
+
+  <section class="lab" id="toolchain"><div class="lab-head"><div><div class="kicker">DEVELOPER TOOLCHAIN</div><h2>Runtime & Environment Commands</h2><p>PowerShell / CMD / Ubuntu 指令範例、Node.js/npm/Git 環境檢查、常用 Runtime 啟動與檢查指令（僅供參考）。</p></div><span class="num">02</span></div><div class="workbench">
+    <div class="panel"><div class="panel-title">COMMAND PLAYBOOK <span class="pill">REFERENCE</span></div><label class="label" for="shell">Environment<select id="shell"><option value="powershell">PowerShell</option><option value="cmd">Windows CMD</option><option value="bash">Ubuntu / Bash</option><option value="bat">Windows Batch</option></select></label><div class="kpis"><div><small>RUNTIME</small><b>Node / npm</b></div><div><small>VCS</small><b>Git</b></div></div><div class="preview"><b id="commandTitle">Inspect development tools</b><pre id="commandText" style="white-space:pre-wrap;color:#a8edcb;font-size:12px">node --version
+npm --version
+git --version</pre><p class="hint" id="commandNote">確認常用開發工具是否可用。</p><button class="btn" id="copyCommand" type="button">Copy command</button></div></div>
+    <div class="panel"><div class="panel-title">ENV CHECK NOTES <span class="pill">GUIDE</span></div><div class="trace"><div class="trace-item"><small>NODE / NPM</small><b>JavaScript runtime & package manager</b><p>使用 <code>node --version</code> 與 <code>npm --version</code> 確認本機環境；前端靜態頁面可直接由瀏覽器開啟。</p></div><div class="trace-item"><small>GIT</small><b>Version control</b><p>使用 <code>git --version</code>、<code>git status --short</code> 檢查工具與工作目錄狀態。</p></div><div class="trace-item"><small>RUNTIME</small><b>Local model service (concept)</b><p>例如 Ollama 本機服務常見檢查：確認服務執行與模型清單。此頁不執行實際啟動或連線，僅示意配置。</p></div></div><p class="hint">本頁面所有 Runtime 與推論行為皆為模擬，不會對外發送請求。</p></div>
+  </div></section>
+</main>
+<footer class="footer"><b>DAVEN / AI ENGINEERING LAB</b><span>Runtime Lab · SIMULATION</span><span><a href="index.html">← Portfolio</a>　·　<a href="https://github.com/jlyay45684/Daven_Demo" target="_blank" rel="noopener noreferrer">Source ↗</a></span></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="assets/common.js" defer></script>
+<script src="assets/runtime.js" defer></script>
+</body>
+</html>

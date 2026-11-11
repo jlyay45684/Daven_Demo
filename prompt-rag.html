@@ -1,0 +1,42 @@
+﻿<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080d18">
+<meta name="description" content="Prompt & RAG Lab — Prompt Engineering 與本機關鍵字知識檢索展示。">
+<title>Prompt &amp; RAG Lab | Daven Demo</title>
+<link rel="stylesheet" href="assets/demo.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="page-progress" aria-hidden="true"><span id="pageProgressBar"></span></div>
+<header class="top">
+  <a class="brand" href="index.html"><span class="brand-mark">D</span><span><b>DAVEN</b><small>AI ENGINEERING LAB</small></span></a>
+  <button class="nav-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="primaryNav">MENU <span aria-hidden="true">☰</span></button>
+  <nav class="nav" id="primaryNav" aria-label="Demo navigation">
+    <a href="index.html">Home</a>
+    <a href="runtime.html">Runtime</a>
+    <a href="agents.html">Agents</a>
+    <a class="active" href="prompt-rag.html" aria-current="page">Prompt / RAG</a>
+    <a href="genai-workflow.html">GenAI Workflow</a>
+  </nav>
+  <span class="status"><i></i>LOCAL / PROMPT &amp; RAG</span>
+</header>
+<main id="main">
+  <a class="back-link" href="index.html">← Back to Portfolio</a>
+  <div class="kicker">03 / PROMPT &amp; RAG LAB</div>
+  <h1 style="margin:8px 0 6px;font-size:clamp(28px,4vw,40px);letter-spacing:-.04em">Prompt Engineering 與知識檢索</h1>
+  <p class="page-intro">Prompt 組裝、約束設計與本機知識檢索流程：Prompt → Knowledge Retrieval → Context Assembly → AI Input。檢索為<strong>瀏覽器本機關鍵字比對</strong>，不是 Embedding 或 Vector Database。</p>
+
+  <section class="lab" id="prompt"><div class="lab-head"><div><div class="kicker">KNOWLEDGE SYSTEMS</div><h2>Prompt &amp; RAG Lab</h2><p>System Prompt、User Prompt、Negative Prompt、Reverse Prompt、Grill-me Prompt、Prompt Assembly、Copy Prompt、Knowledge Fragment Management（Add/Clear）、Keyword Retrieval、Retrieval Results。</p></div><span class="num">01</span></div><div class="workbench">
+    <div class="panel"><div class="panel-title">PROMPT BUILDER <span class="pill">LOCAL</span></div><label class="label" for="systemPrompt">System prompt<textarea id="systemPrompt">You are a precise technical assistant. Use evidence and state uncertainty.</textarea></label><label class="label" for="userPrompt">User prompt<textarea id="userPrompt">Explain why runtime secrets should not be embedded in frontend code.</textarea></label><label class="label" for="negativePrompt">Negative prompt / constraints<textarea id="negativePrompt">Do not invent API responses. Do not expose credentials. Separate facts from assumptions.</textarea></label><label class="label" for="reversePrompt">Reverse prompt / Grill-me questions<textarea id="reversePrompt">Identify assumptions, missing evidence, failure modes, and testable claims.</textarea></label><div class="actions-sm"><button class="btn primary" id="assemblePrompt" type="button">Assemble prompt</button><button class="btn" id="copyPrompt" type="button">Copy output</button></div><div class="output" id="assembledPrompt" aria-live="polite">// Prompt output will appear here.</div></div>
+    <div class="panel"><div class="panel-title">LOCAL KNOWLEDGE RETRIEVAL <span class="pill">KEYWORD SEARCH</span></div><label class="label" for="knowledgeInput">Knowledge fragment<textarea id="knowledgeInput" placeholder="貼上一段知識或文件內容…"></textarea></label><div class="actions-sm"><button class="btn" id="addKnowledge" type="button">Add fragment</button><button class="btn" id="sampleKnowledge" type="button">Load sample set</button><button class="btn" id="clearKnowledge" type="button">Clear</button></div><div id="knowledgeCount" class="hint">0 fragments loaded</div><label class="label" for="retrievalQuery">Retrieval query<input id="retrievalQuery" type="text" value="API key frontend security"></label><button class="btn primary" id="runRetrieval" type="button">Search knowledge</button><div id="retrievalResults" class="trace" style="margin-top:12px"><div class="hint">檢索結果將顯示於此。</div></div><p class="hint"><strong>重要：</strong>使用瀏覽器本機關鍵字重疊示範，不是向量 Embedding 或正式向量資料庫；資料不會上傳。</p></div>
+  </div></section>
+</main>
+<footer class="footer"><b>DAVEN / AI ENGINEERING LAB</b><span>Prompt &amp; RAG Lab · Local keyword demo</span><span><a href="index.html">← Portfolio</a>　·　<a href="https://github.com/jlyay45684/Daven_Demo" target="_blank" rel="noopener noreferrer">Source ↗</a></span></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="assets/common.js" defer></script>
+<script src="assets/prompt-rag.js" defer></script>
+</body>
+</html>
