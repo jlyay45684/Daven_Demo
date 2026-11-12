@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ORION-9 // 星際銀河介面</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cy:#5df0ff; --pu:#a855f7; --mg:#ff4fd8; --glow:#7cc9ff;
+    --panel:rgba(10,16,38,.55);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:
+      radial-gradient(1200px 800px at 75% 15%, rgba(88,28,135,.35), transparent 60%),
+      radial-gradient(1000px 700px at 20% 80%, rgba(12,74,110,.35), transparent 60%),
+      #020208;
+    color:#dff3ff;
+    font-family:'Rajdhani','Noto Sans TC',system-ui,sans-serif;
+    overflow-x:hidden;
+  }
+  #galaxy{position:fixed;inset:0;z-index:0;display:block}
+
+  /* ============ 光暈漸層背景層 (CSS conic / radial) ============ */
+  .aura{position:fixed;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen}
+  .aura .conic{
+    position:absolute;width:70vmax;height:70vmax;left:50%;top:50%;
+    transform:translate(-50%,-50%);
+    background:conic-gradient(from 0deg,
+      rgba(93,240,255,.06), rgba(168,85,247,.10), rgba(255,79,216,.06),
+      rgba(93,240,255,.10), rgba(168,85,247,.06), rgba(93,240,255,.06));
+    filter:blur(60px);
+    animation:spin 60s linear infinite;
+  }
+  .aura .halo{
+    position:absolute;width:46vmax;height:46vmax;left:50%;top:50%;transform:translate(-50%,-50%);
+    background:radial-gradient(circle, rgba(124,201,255,.14) 0%, rgba(168,85,247,.08) 40%, transparent 70%);
+    filter:blur(30px);
+    animation:breathe 9s ease-in-out infinite;
+  }
+  @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+  @keyframes breathe{0%,100%{opacity:.7;scale:1}50%{opacity:1;scale:1.08}}
+
+  /* ============ 掃描線 / 移動光束 ============ */
+  .scan{position:fixed;inset:0;z-index:6;pointer-events:none;opacity:.55;
+    background:repeating-linear-gradient(0deg, rgba(160,220,255,.035) 0 1px, transparent 1px 4px);}
+  .beam{position:fixed;left:0;width:100%;height:120px;z-index:6;pointer-events:none;
+    background:linear-gradient(180deg, transparent, rgba(93,240,255,.05), transparent);
+    animation:beam 8s linear infinite;}
+  @keyframes beam{from{top:-15%}to{top:110%}}
+
+  /* ============ CYBER HUD 框 ============ */
+  .hud{position:fixed;inset:0;z-index:8;pointer-events:none}
+  .corner{position:absolute;width:46px;height:46px;border:2px solid rgba(93,240,255,.6)}
+  .corner.tl{top:18px;left:18px;border-right:none;border-bottom:none}
+  .corner.tr{top:18px;right:18px;border-left:none;border-bottom:none}
+  .corner.bl{bottom:18px;left:18px;border-right:none;border-top:none}
+  .corner.br{bottom:18px;right:18px;border-left:none;border-top:none}
+  .topbar{
+    position:absolute;top:26px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:14px;
+    font-family:'Orbitron',monospace;font-size:12px;letter-spacing:.35em;
+    color:rgba(160,230,255,.85);text-shadow:0 0 12px rgba(93,240,255,.7);
+  }
+  .topbar .dot{width:8px;height:8px;border-radius:50%;background:var(--cy);
+    box-shadow:0 0 10px var(--cy);animation:blink 1.6s ease-in-out infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+  /* 側邊導航 */
+  .nav{position:fixed;right:26px;top:50%;transform:translateY(-50%);z-index:9;display:flex;flex-direction:column;gap:20px}
+  .nav a{pointer-events:auto;width:10px;height:10px;border:1px solid rgba(93,240,255,.7);transform:rotate(45deg);
+    transition:.3s;display:block}
+  .nav a:hover,.nav a.on{background:var(--cy);box-shadow:0 0 14px var(--cy)}
+
+  /* 左下數據面板 */
+  .stats{position:fixed;left:30px;bottom:26px;z-index:9;font-family:'Orbitron',monospace;
+    font-size:10px;letter-spacing:.2em;color:rgba(160,230,255,.9);line-height:1.9}
+  .stats .bar{width:150px;height:5px;border:1px solid rgba(93,240,255,.5);margin:2px 0 8px}
+  .stats .bar i{display:block;height:100%;width:100%;transform-origin:left;
+    background:linear-gradient(90deg,var(--cy),var(--mg));box-shadow:0 0 10px var(--cy);
+    transform:scaleX(0);}
+  .stats b{color:#fff;text-shadow:0 0 8px var(--cy)}
+
+  /* 右下時間 */
+  .clock{position:fixed;right:30px;bottom:26px;z-index:9;font-family:'Orbitron',monospace;
+    font-size:11px;letter-spacing:.25em;color:rgba(160,230,255,.85);text-align:right;line-height:1.9}
+
+  /* ============ 內容區 ============ */
+  #content{position:relative;z-index:5;pointer-events:none}
+  section{min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+    padding:0 8vw;position:relative}
+  .kicker{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:.5em;color:var(--cy);
+    text-shadow:0 0 10px var(--cy);margin-bottom:18px}
+  h1{font-family:'Orbitron','Noto Sans TC',sans-serif;font-size:clamp(34px,7vw,92px);font-weight:800;
+    line-height:1.05;letter-spacing:.06em;
+    background:linear-gradient(120deg,#eafcff 10%, var(--cy) 35%, var(--pu) 65%, var(--mg) 90%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 26px rgba(124,201,255,.45));}
+  h2{font-family:'Orbitron','Noto Sans TC',sans-serif;font-size:clamp(24px,4vw,52px);letter-spacing:.08em;
+    color:#eafcff;text-shadow:0 0 22px rgba(93,240,255,.5)}
+  p{max-width:560px;margin-top:18px;font-size:clamp(14px,1.4vw,18px);color:rgba(210,235,255,.8);letter-spacing:.05em}
+  .tag{display:inline-block;margin-top:26px;padding:10px 22px;border:1px solid rgba(93,240,255,.55);
+    font-family:'Orbitron',monospace;font-size:11px;letter-spacing:.35em;color:var(--cy);
+    background:linear-gradient(120deg, rgba(93,240,255,.08), rgba(168,85,247,.08));
+    box-shadow:0 0 24px rgba(93,240,255,.25), inset 0 0 18px rgba(93,240,255,.1);
+    pointer-events:auto;cursor:pointer;transition:.3s}
+  .tag:hover{background:rgba(93,240,255,.18);box-shadow:0 0 40px rgba(93,240,255,.5)}
+  .panel{max-width:520px;background:var(--panel);border:1px solid rgba(93,240,255,.25);
+    backdrop-filter:blur(6px);padding:26px 30px;margin-top:24px;
+    box-shadow:0 0 40px rgba(93,240,255,.12)}
+  .panel .row{display:flex;justify-content:space-between;font-family:'Orbitron',monospace;
+    font-size:11px;letter-spacing:.2em;padding:7px 0;border-bottom:1px dashed rgba(93,240,255,.15)}
+  .panel .row:last-child{border:none}
+  .panel .row b{color:var(--mg);text-shadow:0 0 8px var(--mg)}
+  .right{align-items:flex-end;text-align:right}
+  section:nth-child(even) .panel{margin-left:auto}
+
+  /* 錯誤診斷 */
+  #err{position:fixed;inset:0;z-index:99;display:none;place-items:center;color:#ff7ab8;
+    font-family:monospace;font-size:13px;padding:30px;white-space:pre-wrap}
+
+  @media (prefers-reduced-motion: reduce){
+    .aura .conic,.aura .halo,.beam,.topbar .dot{animation:none}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+<canvas id="galaxy"></canvas>
+
+<div class="aura"><div class="conic"></div><div class="halo"></div></div>
+<div class="scan"></div><div class="beam"></div>
+
+<div class="hud">
+  <div class="corner tl"></div><div class="corner tr"></div>
+  <div class="corner bl"></div><div class="corner br"></div>
+  <div class="topbar"><span class="dot"></span>ORION-9 // GALACTIC INTERFACE <span id="sec" style="letter-spacing:.15em">SECTOR-α</span></div>
+</div>
+
+<nav class="nav" id="nav"></nav>
+
+<div class="stats">
+  FPS <b id="fps">--</b> &nbsp;|&nbsp; PTS <b id="pts">--</b><br>
+  WARP DRIVE<div class="bar"><i id="warpbar"></i></div>
+  QUALITY <b id="q">T0 · ULTRA</b>
+</div>
+<div class="clock" id="clock">--:--:--<br><span style="opacity:.6">STARDATE 3026.11</span></div>
+
+<div id="content">
+  <section>
+    <div class="kicker">DEEP SPACE // SECTOR α-7749</div>
+    <h1>星際 · 銀河<br>WARP INTERFACE</h1>
+    <p>穿越五萬顆恆星粒子構成的旋臂星系。滑動捲軸潛入星系核心，移動滑鼠操控視差，點擊任意處啟動曲速躍遷。</p>
+    <span class="tag" id="warpbtn">⟶ ENGAGE WARP DRIVE</span>
+  </section>
+  <section class="right">
+    <div class="kicker">NAVIGATION // WORMHOLE</div>
+    <h2>曲速躍遷矩陣</h2>
+    <p>快速捲動或點擊螢幕，空間將產生重力透鏡漣漪與色差撕裂 —— 這是穿越蟲洞的視覺證據。</p>
+  </section>
+  <section>
+    <div class="kicker">TELEMETRY // CORE</div>
+    <h2>星系核心遙測</h2>
+    <div class="panel">
+      <div class="row"><span>核心質量</span><b>4.3 × 10⁶ M☉</b></div>
+      <div class="row"><span>旋臂數量</span><b>5 PERMA-ARMS</b></div>
+      <div class="row"><span>暗物質暈</span><b>ACTIVE</b></div>
+      <div class="row"><span>曲速核心</span><b id="coreState">STANDBY</b></div>
+    </div>
+  </section>
+  <section class="right">
+    <div class="kicker">SIGN OFF</div>
+    <h2>銀河盡頭，再會。</h2>
+    <p>本頁面以 WebGL GPU 粒子、UnrealBloom 輝光與自適應品質系統即時運算。祝你旅途順利，指揮官。</p>
+  </section>
+</div>
+
+<div id="err"></div>
+
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+}}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+const errBox = document.getElementById('err');
+const showErr = m => { errBox.style.display='grid'; errBox.textContent = 'SYSTEM FAULT\n'+m; };
+
+try{
+
+/* ================= 基礎設定 ================= */
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isMobile = matchMedia('(pointer: coarse)').matches || innerWidth < 768;
+const canvas = document.getElementById('galaxy');
+const DPR_CAP = 2;
+
+const renderer = new THREE.WebGLRenderer({canvas, antialias:false, alpha:false, powerPreference:'high-performance'});
+let pixelRatio = Math.min(devicePixelRatio || 1, DPR_CAP);
+renderer.setPixelRatio(pixelRatio);
+renderer.setSize(innerWidth, innerHeight);
+renderer.setClearColor(0x020208, 1);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x04040f, 0.02);
+const camera = new THREE.PerspectiveCamera(62, innerWidth/innerHeight, 0.1, 220);
+scene.add(camera);
+
+/* ================= 星雲背景 (shader nebula) ================= */
+const nebulaMat = new THREE.ShaderMaterial({
+  uniforms:{ uTime:{value:0}, uHue:{value:0} },
+  vertexShader:`varying vec2 vUv; void main(){vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+  fragmentShader:`
+    varying vec2 vUv; uniform float uTime; uniform float uHue;
+    float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+    float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+      return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);}
+    float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<5;i++){v+=a*noise(p);p=p*2.03+11.7;a*=.55;}return v;}
+    void main(){
+      vec2 uv = vUv;
+      float n1 = fbm(uv*3.0 + vec2(uTime*.015, uTime*.008));
+      float n2 = fbm(uv*5.5 - vec2(uTime*.01, 0.) + n1*1.5);
+      float d = length(uv-.5);
+      vec3 deep = vec3(.012,.015,.06);
+      vec3 vio  = vec3(.30,.10,.55);
+      vec3 cyan = vec3(.05,.45,.65);
+      vec3 col = deep + vio*smoothstep(.38,.9,n1)*.5 + cyan*smoothstep(.5,.95,n2)*.38;
+      col *= smoothstep(1.05,.15,d);           // 邊緣暗化
+      col += vec3(.9,.5,1.)*pow(max(n2-.66,0.)*2.0,2.)* .35;  // 亮芯
+      gl_FragColor = vec4(col,1.);
+    }`,
+  depthWrite:false
+});
+const nebula = new THREE.Mesh(new THREE.PlaneGeometry(200,120), nebulaMat);
+nebula.position.z = -60;
+nebula.renderOrder = -1;
+camera.add(nebula);
+
+/* ================= GPU 粒子星系 ================= */
+const BASE_COUNT = isMobile ? 26000 : 62000;
+let liveCount = BASE_COUNT;
+
+const gGeo = new THREE.BufferGeometry();
+{
+  const pos = new Float32Array(BASE_COUNT*3);
+  const col = new Float32Array(BASE_COUNT*3);
+  const scl = new Float32Array(BASE_COUNT);
+  const cIn = new THREE.Color('#ffb469'), cOut = new THREE.Color('#5b7bff'), cHot = new THREE.Color('#9ff3ff');
+  const R = 10, BRANCHES = 5, SPIN = 1.35, POW = 2.7;
+  for(let i=0;i<BASE_COUNT;i++){
+    const i3 = i*3;
+    const t = Math.random();
+    const r = Math.pow(t,1.6)*R;
+    const branch = (i%BRANCHES)/BRANCHES*Math.PI*2;
+    const spinA = r*SPIN;
+    const rnd = (s)=> Math.pow(Math.random(),POW) * (Math.random()<.5?1:-1) * s * (r/R+.25);
+    pos[i3]   = Math.cos(branch+spinA)*r + rnd(1.1);
+    pos[i3+1] = rnd(.55) * .6;
+    pos[i3+2] = Math.sin(branch+spinA)*r + rnd(1.1);
+    const c = cIn.clone().lerp(cOut, Math.min(r/R,1));
+    const hot = Math.random()<.035;
+    if(hot) c.copy(cHot).lerp(cOut, Math.random()*.4);
+    col[i3]=c.r; col[i3+1]=c.g; col[i3+2]=c.b;
+    scl[i] = hot ? 1.6+Math.random() : .5+Math.random()*.8;
+  }
+  gGeo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  gGeo.setAttribute('aColor',   new THREE.BufferAttribute(col,3));
+  gGeo.setAttribute('aScale',   new THREE.BufferAttribute(scl,1));
+}
+const gMat = new THREE.ShaderMaterial({
+  uniforms:{ uTime:{value:0}, uSize:{value: isMobile? 42: 38}, uWarp:{value:0} },
+  vertexShader:`
+    uniform float uTime; uniform float uSize; uniform float uWarp;
+    attribute vec3 aColor; attribute float aScale;
+    varying vec3 vColor; varying float vTw;
+    void main(){
+      vec3 p = position;
+      float r = length(p.xz);
+      float ang = uTime * .07 * (1.6/(0.5+r));         // 內快外慢的差速旋轉
+      float ca = cos(ang), sa = sin(ang);
+      p.xz = mat2(ca,-sa,sa,ca) * p.xz;
+      p.y += sin(uTime*.6 + r*2.2)*.04;               // 微幅波動
+      vec4 mv = modelViewMatrix * vec4(p,1.);
+      float tw = .75 + .25*sin(uTime*3. + r*7. + position.y*4.);
+      gl_PointSize = uSize * aScale * tw * (1. + uWarp*.6) * (1./-mv.z);
+      gl_Position = projectionMatrix * mv;
+      vColor = aColor; vTw = tw;
+    }`,
+  fragmentShader:`
+    varying vec3 vColor; varying float vTw;
+    void main(){
+      float d = distance(gl_PointCoord, vec2(.5));
+      float a = pow(max(1.-d*2.,0.), 2.6);
+      a += pow(max(1.-d*2.,0.), 8.)*.9;               // 亮核
+      gl_FragColor = vec4(vColor*(0.9+vTw*.6), a);
+    }`,
+  transparent:true, depthWrite:false, blending:THREE.AdditiveBlending
+});
+const galaxy = new THREE.Points(gGeo, gMat);
+scene.add(galaxy);
+
+/* 遠景靜態星塵（雙層視差） */
+function starField(n, spread, size, col){
+  const g = new THREE.BufferGeometry();
+  const p = new Float32Array(n*3);
+  for(let i=0;i<n*3;i++) p[i]=(Math.random()*2-1)*spread;
+  g.setAttribute('position', new THREE.BufferAttribute(p,3));
+  const m = new THREE.PointsMaterial({size, color:col, transparent:true, opacity:.75,
+    depthWrite:false, blending:THREE.AdditiveBlending, sizeAttenuation:true});
+  return new THREE.Points(g,m);
+}
+const starsFar  = starField(2500, 160, .55, 0x88aaff);
+const starsNear = starField(1200, 90,  .9,  0xbfe8ff);
+scene.add(starsFar, starsNear);
+
+/* 星系核心：發光奇點 + 吸積環 */
+const core = new THREE.Mesh(
+  new THREE.SphereGeometry(.55, 32, 32),
+  new THREE.MeshBasicMaterial({color:0xfff3d6})
+);
+const halo = new THREE.Mesh(
+  new THREE.SphereGeometry(1.05, 32, 32),
+  new THREE.ShaderMaterial({
+    transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.BackSide,
+    vertexShader:`varying vec3 vN; varying vec3 vE;
+      void main(){vN=normalize(normalMatrix*normal); vec4 mv=modelViewMatrix*vec4(position,1.); vE=normalize(-mv.xyz); gl_Position=projectionMatrix*mv;}`,
+    fragmentShader:`varying vec3 vN; varying vec3 vE;
+      void main(){float f=pow(1.-abs(dot(vN,vE)),2.2); gl_FragColor=vec4(vec3(1.,.75,.4)*f*1.6, f);}`
+  })
+);
+const ring = new THREE.Mesh(
+  new THREE.TorusGeometry(1.7,.05,16,90),
+  new THREE.MeshBasicMaterial({color:0x7cd8ff, transparent:true, opacity:.6})
+);
+ring.rotation.x = Math.PI/2.3;
+scene.add(core, halo, ring);
+
+/* ================= 後期：Bloom + 空間扭曲 ================= */
+const composer = new EffectComposer(renderer);
+composer.setPixelRatio(pixelRatio);
+composer.setSize(innerWidth, innerHeight);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.8, .7, .22);
+composer.addPass(bloom);
+
+const WarpShader = {
+  uniforms:{ tDiffuse:{value:null}, uWarp:{value:0}, uTime:{value:0} },
+  vertexShader:`varying vec2 vUv; void main(){vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+  fragmentShader:`
+    uniform sampler2D tDiffuse; uniform float uWarp; uniform float uTime; varying vec2 vUv;
+    void main(){
+      vec2 c = vUv-.5;
+      float r = length(c);
+      float w = uWarp;
+      vec2 uv = c*(1. - w*.30*r + w*.05*sin(r*26. - uTime*7.)) + .5;
+      float ca = w*.006 + .0007;
+      vec4 col;
+      col.r = texture2D(tDiffuse, uv + c*ca).r;
+      col.g = texture2D(tDiffuse, uv).g;
+      col.b = texture2D(tDiffuse, uv - c*ca).b;
+      col.rgb *= smoothstep(1.05,.3,r)*.35+.75;       // vignette
+      gl_FragColor = col;
+    }`
+};
+const warpPass = new ShaderPass(WarpShader);
+composer.addPass(warpPass);
+composer.addPass(new OutputPass());
+
+/* ================= 捲軸 / 視差 / 曲速 ================= */
+let scrollP = 0, scrollVel = 0, lastY = scrollY;
+let warpPulse = 0, warpBase = 0;
+const mouse = {x:0,y:0,tx:0,ty:0};
+
+addEventListener('mousemove', e=>{
+  mouse.tx = (e.clientX/innerWidth - .5)*2;
+  mouse.ty = (e.clientY/innerHeight - .5)*2;
+});
+addEventListener('deviceorientation', e=>{
+  if(e.gamma==null) return;
+  mouse.tx = Math.max(-1,Math.min(1, e.gamma/35));
+  mouse.ty = Math.max(-1,Math.min(1, (e.beta-45)/35));
+});
+function engageWarp(){
+  if(reduced) return;
+  warpPulse = Math.min(warpPulse + .9, 1.4);
+  const cs = document.getElementById('coreState');
+  cs.textContent = 'WARP ⚡ ENGAGED';
+  setTimeout(()=>cs.textContent='STANDBY', 1200);
+}
+addEventListener('pointerdown', e=>{
+  if(e.target.closest('a')) return;
+  engageWarp();
+});
+addEventListener('keydown', e=>{ if(e.code==='Space'){e.preventDefault();engageWarp();} });
+document.getElementById('warpbtn').addEventListener('click', engageWarp);
+
+/* 相機路徑（捲動驅動深入星系） */
+const KEYS = [
+  {z: 13.5, y: 4.6, ry: 0.0},
+  {z:  6.5, y: 2.4, ry: 0.8},
+  {z:  1.0, y: 0.3, ry: 1.8},
+  {z: -3.2, y: 1.4, ry: 3.0},
+  {z:  6.0, y: 3.4, ry: 4.2},
+];
+function camAt(p, out){
+  const f = p*(KEYS.length-1);
+  const i = Math.min(Math.floor(f), KEYS.length-2);
+  const t = f-i;
+  const a=KEYS[i], b=KEYS[i+1];
+  out.z = a.z+(b.z-a.z)*t; out.y = a.y+(b.y-a.y)*t; out.ry = a.ry+(b.ry-a.ry)*t;
+}
+const camTarget = {z:13.5,y:4.6,ry:0};
+
+/* ================= 自適應品質 ================= */
+let qualityTier = 0;
+const qEl = document.getElementById('q');
+const fpsEl = document.getElementById('fps');
+const ptsEl = document.getElementById('pts');
+const warpBar = document.getElementById('warpbar');
+let frames = 0, fpsClock = performance.now(), lowStreak = 0;
+
+function degrade(){
+  qualityTier++;
+  if(qualityTier===1){
+    liveCount = Math.floor(BASE_COUNT*.6);
+    pixelRatio = Math.max(1, Math.min(devicePixelRatio,2)*.8);
+  }else if(qualityTier===2){
+    liveCount = Math.floor(BASE_COUNT*.38);
+    pixelRatio = Math.min(1.25, Math.min(devicePixelRatio,2));
+    bloom.strength = .95;
+  }else return;
+  gGeo.setDrawRange(0, liveCount);
+  renderer.setPixelRatio(pixelRatio);
+  composer.setPixelRatio(pixelRatio);
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+  qEl.textContent = 'T'+qualityTier + (qualityTier===1?' · BALANCED':' · ECO');
+  ptsEl.textContent = (liveCount/1000).toFixed(0)+'K';
+}
+
+/* ================= 主循環 ================= */
+const clock = new THREE.Clock();
+let running = true;
+let hudClock = 0;
+
+function tick(){
+  if(!running) return;
+  requestAnimationFrame(tick);
+  const dt = Math.min(clock.getDelta(), .05);
+  const t = clock.elapsedTime;
+
+  /* 捲動 */
+  const y = scrollY;
+  scrollVel = Math.min(Math.abs(y-lastY)/Math.max(innerHeight,1)*4, 1);
+  lastY = y;
+  const max = Math.max(document.documentElement.scrollHeight - innerHeight, 1);
+  scrollP = y/max;
+
+  /* 曲速強度 */
+  warpPulse *= Math.exp(-dt*2.2);
+  const targetWarp = reduced ? 0 : Math.min(warpPulse + scrollVel*.55, 1.5);
+  warpBase += (targetWarp-warpBase)*Math.min(dt*8,1);
+  warpPass.uniforms.uWarp.value = warpBase;
+  warpPass.uniforms.uTime.value = t;
+  gMat.uniforms.uWarp.value = warpBase;
+
+  camera.fov = 62 + warpBase*16;
+  camera.updateProjectionMatrix();
+
+  /* 相機：路徑 + 視差 */
+  camAt(scrollP, camTarget);
+  mouse.x += (mouse.tx-mouse.x)*Math.min(dt*4,1);
+  mouse.y += (mouse.ty-mouse.y)*Math.min(dt*4,1);
+  camera.position.z = camTarget.z;
+  camera.position.y = camTarget.y + mouse.y*-.9;
+  camera.position.x = mouse.x*1.6;
+  camera.lookAt(mouse.x*-.8, mouse.y*.5, 0);
+  camera.rotation.z = mouse.x*.03 + warpBase*.02*Math.sin(t*30);
+
+  /* 星系動態 */
+  const spin = reduced ? .01 : .045;
+  galaxy.rotation.y += dt*spin;
+  starsFar.rotation.y  -= dt*.004;
+  starsNear.rotation.y -= dt*.008;
+  starsNear.position.z = Math.sin(t*.1)*2;   // 雙層視差
+  halo.scale.setScalar(1 + Math.sin(t*1.4)*.06 + warpBase*.35);
+  ring.rotation.z += dt*(.3 + warpBase*3);
+  nebulaMat.uniforms.uTime.value = t;
+  nebulaMat.uniforms.uHue.value = scrollP;
+  nebula.position.z = -60;                    // 固定在相機前方
+  nebula.rotation.z = scrollP*.6;
+
+  /* HUD（每 0.25s 一次，避免逐幀 DOM） */
+  hudClock += dt;
+  if(hudClock > .25){
+    hudClock = 0;
+    warpBar.style.transform = 'scaleX('+Math.min(warpBase,1).toFixed(2)+')';
+  }
+
+  /* FPS 統計（每秒） */
+  frames++;
+  const now = performance.now();
+  if(now - fpsClock >= 1000){
+    const fps = frames*1000/(now-fpsClock);
+    frames = 0; fpsClock = now;
+    fpsEl.textContent = fps.toFixed(0);
+    if(!reduced){
+      if(fps < 38){ lowStreak++; if(lowStreak>=2 && qualityTier<2){ degrade(); lowStreak=0; } }
+      else lowStreak = 0;
+    }
+  }
+
+  composer.render();
+}
+
+/* ================= 生命週期 ================= */
+document.addEventListener('visibilitychange', ()=>{
+  running = !document.hidden;
+  if(running){ clock.getDelta(); tick(); }
+});
+addEventListener('resize', ()=>{
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+  bloom.setSize(innerWidth, innerHeight);
+});
+
+/* 導航點 */
+const nav = document.getElementById('nav');
+const secs = document.querySelectorAll('section');
+secs.forEach((s,i)=>{
+  const a = document.createElement('a');
+  a.href = '#';
+  a.addEventListener('click', ev=>{ev.preventDefault(); s.scrollIntoView({behavior: reduced?'auto':'smooth'});});
+  nav.appendChild(a);
+});
+const dots = nav.querySelectorAll('a');
+const secNames = ['SECTOR-α','SECTOR-β','SECTOR-γ','SECTOR-Ω'];
+setInterval(()=>{
+  const idx = Math.min(Math.round(scrollP*(secs.length-1)), secs.length-1);
+  dots.forEach((d,i)=>d.classList.toggle('on', i===idx));
+  document.getElementById('sec').textContent = secNames[idx];
+}, 400);
+
+/* 時鐘（每秒一次） */
+const clockEl = document.getElementById('clock');
+setInterval(()=>{
+  const d = new Date();
+  const p = n=>String(n).padStart(2,'0');
+  clockEl.innerHTML = p(d.getUTCHours())+':'+p(d.getUTCMinutes())+':'+p(d.getUTCSeconds())+' UTC<br><span style="opacity:.6">STARDATE 3026.11</span>';
+}, 1000);
+
+ptsEl.textContent = (BASE_COUNT/1000).toFixed(0)+'K';
+tick();
+
+}catch(e){ showErr(e && (e.stack||e.message) || String(e)); }
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>

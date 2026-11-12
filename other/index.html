@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星際銀河 · 粒子與 3D 動畫</title>
+<style>
+  :root {
+    --bg: #04060f;
+    --accent: #7dd6ff;
+    --accent2: #b48cff;
+    --text: #e8eefc;
+    --muted: #8b96b8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    overflow-x: hidden;
+  }
+  #webgl {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    display: block;
+  }
+  .vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(2,3,10,0.75) 100%);
+  }
+  main {
+    position: relative;
+    z-index: 2;
+  }
+  section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 8vh 6vw;
+    opacity: 0;
+    transform: translateY(60px);
+    transition: opacity 1s ease, transform 1s ease;
+  }
+  section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  h1 {
+    font-size: clamp(2.6rem, 7vw, 5.4rem);
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    background: linear-gradient(120deg, var(--accent), var(--accent2), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 60px rgba(125, 214, 255, 0.25);
+    margin-bottom: 1.2rem;
+  }
+  h2 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+  p.lead {
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    color: var(--muted);
+    letter-spacing: 0.35em;
+    max-width: 640px;
+    line-height: 2;
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.4em;
+    animation: float 2.4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translate(-50%, 0); opacity: 0.5; }
+    50% { transform: translate(-50%, 12px); opacity: 1; }
+  }
+  .cards {
+    display: flex;
+    gap: 1.6rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 960px;
+  }
+  .card {
+    flex: 1 1 240px;
+    max-width: 300px;
+    padding: 2.2rem 1.8rem;
+    border: 1px solid rgba(125, 214, 255, 0.18);
+    border-radius: 18px;
+    background: rgba(10, 16, 38, 0.45);
+    backdrop-filter: blur(10px);
+    transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  }
+  .card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(125, 214, 255, 0.55);
+    box-shadow: 0 20px 50px rgba(125, 214, 255, 0.12);
+  }
+  .card .icon { font-size: 2.2rem; margin-bottom: 1rem; display: block; }
+  .card h3 { font-size: 1.15rem; letter-spacing: 0.2em; margin-bottom: 0.8rem; color: var(--accent); }
+  .card p { font-size: 0.92rem; line-height: 1.9; color: var(--muted); }
+  footer {
+    position: relative;
+    z-index: 2;
+    padding: 4vh 6vw;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="webgl"></canvas>
+<div class="vignette"></div>
+
+<main>
+  <section id="hero" class="visible" style="position:relative;">
+    <h1>星際銀河</h1>
+    <p class="lead">漫遊於萬千粒子之間，見證三維宇宙的流轉與呼吸</p>
+    <div class="scroll-hint">往 下 探 索 ▾</div>
+  </section>
+
+  <section>
+    <h2>粒子之海</h2>
+    <p class="lead">六千餘顆發光粒子構成螺旋星系，隨滑鼠移動產生視差，星塵在你的指尖流轉</p>
+  </section>
+
+  <section>
+    <h2>三維結晶</h2>
+    <div class="cards">
+      <div class="card">
+        <span class="icon">✦</span>
+        <h3>發光粒子</h3>
+        <p>加成混合渲染，呈現星光疊加的璀璨效果，深度霧化營造宇宙層次。</p>
+      </div>
+      <div class="card">
+        <span class="icon">◈</span>
+        <h3>旋轉晶體</h3>
+        <p>二十面體線框與實體雙層結構，緩慢自轉並隨滑鼠視角輕擺。</p>
+      </div>
+      <div class="card">
+        <span class="icon">✧</span>
+        <h3>滾動敘事</h3>
+        <p>鏡頭隨頁面捲動推移，三個章節依序浮現，交織沉浸式體驗。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>啟程</h2>
+    <p class="lead">移動滑鼠 · 捲動頁面 · 感受這片由數學與光構成的銀河</p>
+  </section>
+</main>
+
+<footer>星際銀河 · THREE.JS PARTICLE EXPERIENCE · 2026</footer>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.170.0/build/three.module.js"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+// ---------- 基本場景 ----------
+const canvas = document.getElementById('webgl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x04060f, 0.055);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 0, 8);
+
+// ---------- 螺旋星系粒子 ----------
+const COUNT = 6000;
+const positions = new Float32Array(COUNT * 3);
+const colors = new Float32Array(COUNT * 3);
+
+const cIn  = new THREE.Color('#7dd6ff');
+const cMid = new THREE.Color('#8f7bff');
+const cOut = new THREE.Color('#ff7ac6');
+
+const arms = 4;
+for (let i = 0; i < COUNT; i++) {
+  const t = Math.pow(Math.random(), 0.6);
+  const radius = t * 9;
+  const armAngle = (i % arms) / arms * Math.PI * 2;
+  const spin = radius * 0.55;
+  const scatter = (1 - t) * 1.4 + 0.15;
+  const angle = armAngle + spin + (Math.random() - 0.5) * scatter;
+  const r = radius + (Math.random() - 0.5) * scatter * 1.5;
+
+  positions[i * 3]     = Math.cos(angle) * r + (Math.random() - 0.5) * 0.6;
+  positions[i * 3 + 1] = (Math.random() - 0.5) * scatter * 1.2;
+  positions[i * 3 + 2] = Math.sin(angle) * r + (Math.random() - 0.5) * 0.6;
+
+  const c = t < 0.45 ? cIn.clone().lerp(cMid, t / 0.45) : cMid.clone().lerp(cOut, (t - 0.45) / 0.55);
+  colors[i * 3]     = c.r;
+  colors[i * 3 + 1] = c.g;
+  colors[i * 3 + 2] = c.b;
+}
+
+const galaxyGeo = new THREE.BufferGeometry();
+galaxyGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+galaxyGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+const galaxyMat = new THREE.PointsMaterial({
+  size: 0.055,
+  vertexColors: true,
+  transparent: true,
+  opacity: 0.9,
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+  sizeAttenuation: true
+});
+
+const galaxy = new THREE.Points(galaxyGeo, galaxyMat);
+galaxy.rotation.x = 0.35;
+scene.add(galaxy);
+
+// ---------- 遠景星空 ----------
+const starCount = 1500;
+const starPos = new Float32Array(starCount * 3);
+for (let i = 0; i < starCount; i++) {
+  starPos[i * 3]     = (Math.random() - 0.5) * 60;
+  starPos[i * 3 + 1] = (Math.random() - 0.5) * 40;
+  starPos[i * 3 + 2] = (Math.random() - 0.5) * 60 - 10;
+}
+const starGeo = new THREE.BufferGeometry();
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+const starMat = new THREE.PointsMaterial({
+  color: 0xbfd8ff, size: 0.05, transparent: true, opacity: 0.7,
+  blending: THREE.AdditiveBlending, depthWrite: false
+});
+const stars = new THREE.Points(starGeo, starMat);
+scene.add(stars);
+
+// ---------- 旋轉 3D 晶體 ----------
+const crystalGroup = new THREE.Group();
+crystalGroup.position.set(0, 0, 0);
+
+const coreMat = new THREE.MeshStandardMaterial({
+  color: 0x2a3f7a,
+  emissive: 0x1b2c55,
+  metalness: 0.85,
+  roughness: 0.25,
+  transparent: true,
+  opacity: 0.85
+});
+const core = new THREE.Mesh(new THREE.IcosahedronGeometry(1.1, 1), coreMat);
+
+const wireMat = new THREE.MeshBasicMaterial({
+  color: 0x7dd6ff, wireframe: true, transparent: true, opacity: 0.55
+});
+const wire = new THREE.Mesh(new THREE.IcosahedronGeometry(1.45, 1), wireMat);
+
+const haloMat = new THREE.MeshBasicMaterial({
+  color: 0xb48cff, wireframe: true, transparent: true, opacity: 0.15
+});
+const halo = new THREE.Mesh(new THREE.IcosahedronGeometry(1.9, 2), haloMat);
+
+crystalGroup.add(core, wire, halo);
+scene.add(crystalGroup);
+
+// 光源
+scene.add(new THREE.AmbientLight(0x334466, 1.2));
+const p1 = new THREE.PointLight(0x7dd6ff, 60, 40); p1.position.set(5, 5, 5);
+const p2 = new THREE.PointLight(0xb48cff, 50, 40); p2.position.set(-5, -3, 4);
+scene.add(p1, p2);
+
+// ---------- 滑鼠視差 ----------
+const mouse = { x: 0, y: 0 };
+const smoothed = { x: 0, y: 0 };
+window.addEventListener('pointermove', (e) => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = (e.clientY / window.innerHeight) * 2 - 1;
+});
+
+// ---------- 捲動進度 ----------
+let scrollProgress = 0;
+window.addEventListener('scroll', () => {
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  scrollProgress = max > 0 ? window.scrollY / max : 0;
+}, { passive: true });
+
+// 章節浮現
+const sections = document.querySelectorAll('section');
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(en => { if (en.isIntersecting) en.target.classList.add('visible'); });
+}, { threshold: 0.25 });
+sections.forEach(s => io.observe(s));
+
+// ---------- 縮放 ----------
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+// ---------- 動畫迴圈 ----------
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const elapsed = clock.getElapsedTime();
+
+  smoothed.x += (mouse.x - smoothed.x) * 0.04;
+  smoothed.y += (mouse.y - smoothed.y) * 0.04;
+
+  // 星系緩轉 + 視差
+  galaxy.rotation.y = elapsed * 0.06 + smoothed.x * 0.35;
+  galaxy.rotation.x = 0.35 + smoothed.y * 0.15;
+  stars.rotation.y = elapsed * 0.012;
+
+  // 晶體自轉 + 呼吸
+  crystalGroup.rotation.y = elapsed * 0.4;
+  crystalGroup.rotation.x = Math.sin(elapsed * 0.5) * 0.2 + smoothed.y * 0.25;
+  core.scale.setScalar(1 + Math.sin(elapsed * 1.4) * 0.04);
+  wire.rotation.y = -elapsed * 0.25;
+  halo.rotation.y = elapsed * 0.15;
+  halo.rotation.z = elapsed * 0.1;
+  halo.scale.setScalar(1 + Math.sin(elapsed * 0.8) * 0.06);
+
+  // 晶體隨捲動浮動
+  crystalGroup.position.y = Math.sin(elapsed * 0.8) * 0.15 + scrollProgress * -2.5;
+  crystalGroup.position.x = Math.sin(scrollProgress * Math.PI * 2) * 1.5;
+
+  // 鏡頭隨捲動與視差推移
+  camera.position.x += ((smoothed.x * 1.2) - camera.position.x) * 0.03;
+  camera.position.y += ((-smoothed.y * 0.8) - camera.position.y) * 0.03;
+  camera.position.z = 8 + scrollProgress * 5;
+  camera.lookAt(0, scrollProgress * -2, 0);
+
+  renderer.render(scene, camera);
+}
+animate();
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
