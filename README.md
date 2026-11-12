@@ -10,6 +10,16 @@ Daven 的互動式 AI Engineering 作品集入口（Portfolio Hub），將既有
 - Prompt & RAG Lab: https://jlyay45684.github.io/Daven_Demo/prompt-rag.html
 - GenAI Workflow & Product Delivery Studio: https://jlyay45684.github.io/Daven_Demo/genai-workflow.html
 
+## 獨立視覺作品
+
+### NEXUS — 穿越星際的邊界
+
+- Live Demo: https://jlyay45684.github.io/Daven_Demo/NEXUS/nexus.html
+- 原始碼：[`NEXUS/`](./NEXUS/)
+- 技術：原生 HTML / CSS / JavaScript、Three.js 0.160.0、GLSL Shader、EffectComposer、UnrealBloomPass。
+- 特色：130,000 粒子螺旋星系、遠景星體、星塵、曲速航道、黑洞吸積盤、重力透鏡、時空漣漪、滾動相機路徑與游標引力互動。
+- 此作品為獨立視覺展示，不計入上方四個功能型 HTML Demo。
+
 ## 四個 Demo 與展示技術
 
 ### 1. runtime.html — AI Runtime Lab
@@ -41,7 +51,7 @@ Daven 的互動式 AI Engineering 作品集入口（Portfolio Hub），將既有
 
 ## Local Run
 
-直接以瀏覽器開啟根目錄的 `index.html`（或任一 Demo HTML），不需要安裝套件、建置流程或本機伺服器（使用相對路徑與一般 script/defer 載入）。
+四個功能型 Demo 可直接以瀏覽器開啟根目錄的 `index.html`（或任一 Demo HTML）。NEXUS 使用 ES Modules 與 Three.js Import Map，請透過 HTTP Server 執行，不要以 `file://` 直接開啟；詳細指令見 `NEXUS/README.md`。
 
 ## GitHub Pages 部署方式
 
@@ -54,6 +64,12 @@ Daven 的互動式 AI Engineering 作品集入口（Portfolio Hub），將既有
 
 ```text
 Daven_Demo/
+├── NEXUS/
+│   ├── nexus.html
+│   ├── nexus.css
+│   ├── nexus-ui.js
+│   ├── nexus-scene.js
+│   └── README.md
 ├── index.html
 ├── runtime.html
 ├── agents.html
