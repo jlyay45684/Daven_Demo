@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XENO·CORE ／ 外星科技 × ROBOTICS</title>
+<style>
+/* ============================================================
+   PALETTE — measured from source image (PIL k-means, 7 clusters)
+   ============================================================ */
+:root{
+  --bg-deep:   #050A09;  /* 19.6% 深淵黑綠 */
+  --bg-main:   #0B1916;  /* 31.0% 主底色   */
+  --bg-panel:  #10221D;  /* 25.0% 面板綠   */
+  --line:      #25362D;  /* 5.3%  邊框線   */
+  --sage:      #45554B;  /* 4.2%  霧灰綠   */
+  --text:      #97A89F;  /* 1.5%  內文色   */
+  --accent:    #80B060;  /* 高亮輝光綠(實測 bright cluster) */
+  --flash:     #E0F0F0;  /* 近白爆閃(實測 bright cluster)   */
+  --font-sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  --font-mono:"JetBrains Mono","Cascadia Code",Consolas,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg-deep);
+  color:var(--text);
+  font-family:var(--font-sans);
+  overflow-x:hidden;
+  line-height:1.7;
+}
+::selection{background:var(--accent);color:var(--bg-deep)}
+/* ---------- 掃描線全螢幕疊層(純 CSS,不占 JS) ---------- */
+.scanlines{
+  position:fixed;inset:0;z-index:60;pointer-events:none;
+  background:repeating-linear-gradient(0deg,rgba(5,10,9,.22) 0 1px,transparent 1px 3px);
+  mix-blend-mode:overlay;
+}
+.scanlines::after{
+  content:"";position:absolute;left:0;right:0;height:22vh;
+  background:linear-gradient(180deg,transparent,rgba(128,176,96,.055),transparent);
+  animation:sweep 7s linear infinite;
+}
+@keyframes sweep{from{top:-25vh}to{top:110vh}}
+/* ---------- 呼吸光暈(只動 opacity/transform) ---------- */
+.breath{
+  position:absolute;border-radius:50%;filter:blur(2px);pointer-events:none;
+  animation:breath 5.2s ease-in-out infinite;will-change:transform,opacity;
+}
+@keyframes breath{
+  0%,100%{opacity:.25;transform:scale(.92)}
+  50%{opacity:.85;transform:scale(1.08)}
+}
+/* ---------- 線性強光:雷射光束掃掠(只動 transform/opacity) ---------- */
+.beams{position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+.beam{
+  position:absolute;width:160%;height:2px;left:-30%;
+  background:linear-gradient(90deg,transparent 2%,rgba(128,176,96,.55) 30%,rgba(224,240,240,.98) 50%,rgba(128,176,96,.55) 70%,transparent 98%);
+  box-shadow:0 0 18px 2px rgba(128,176,96,.5),0 0 60px 8px rgba(128,176,96,.18);
+  opacity:0;will-change:transform,opacity;
+}
+.beam.b1{top:20%;transform:rotate(16deg);animation:beamSweep 8s cubic-bezier(.4,0,.2,1) infinite}
+.beam.b2{top:47%;transform:rotate(-12deg);animation:beamSweep 12s cubic-bezier(.4,0,.2,1) infinite 2.8s}
+.beam.b3{top:72%;transform:rotate(9deg);animation:beamSweep 10s cubic-bezier(.4,0,.2,1) infinite 5.6s}
+@keyframes beamSweep{
+  0%{opacity:0;transform:rotate(16deg) translateX(-55%) scaleX(.25)}
+  10%{opacity:.95}
+  32%{opacity:.95}
+  48%,100%{opacity:0;transform:rotate(16deg) translateX(55%) scaleX(1.1)}
+}
+.beam.b2{animation-name:beamSweep2}
+@keyframes beamSweep2{
+  0%{opacity:0;transform:rotate(-12deg) translateX(-55%) scaleX(.3)}
+  10%{opacity:.9}
+  34%{opacity:.9}
+  50%,100%{opacity:0;transform:rotate(-12deg) translateX(55%) scaleX(1.05)}
+}
+.beam.b3{animation-name:beamSweep3}
+@keyframes beamSweep3{
+  0%{opacity:0;transform:rotate(9deg) translateX(-55%) scaleX(.2)}
+  12%{opacity:.85}
+  30%{opacity:.85}
+  46%,100%{opacity:0;transform:rotate(9deg) translateX(55%) scaleX(1.1)}
+}
+/* ---------- 衝擊波光環:單一 canvas 物件池,lighter 疊光,零 DOM 開銷 ---------- */
+#rings{position:fixed;inset:0;width:100%;height:100%;z-index:55;pointer-events:none}
+#ship{position:fixed;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;opacity:.9}
+/* ---------- 局部全息效果:只套用在特性卡(非全螢幕) ---------- */
+.card.holo::after{
+  content:"";position:absolute;inset:0;border-radius:18px;pointer-events:none;z-index:1;
+  background:
+    repeating-linear-gradient(0deg,rgba(128,176,96,.10) 0 1px,transparent 1px 4px),
+    linear-gradient(115deg,transparent 30%,rgba(224,240,240,.16) 46%,rgba(128,176,96,.22) 50%,rgba(224,240,240,.16) 54%,transparent 70%);
+  background-size:100% 100%,300% 100%;
+  animation:holoFlicker 3.7s steps(1) infinite,holoSweep 6s linear infinite;
+  mix-blend-mode:screen;
+}
+@keyframes holoFlicker{0%,100%{opacity:.75}7%{opacity:.4}9%{opacity:.8}54%{opacity:.55}56%{opacity:.85}78%{opacity:.45}80%{opacity:.75}}
+@keyframes holoSweep{0%{background-position:0 0,120% 0}100%{background-position:0 0,-80% 0}}
+.card.holo h3{text-shadow:1.8px 0 rgba(110,215,255,.45),-1.8px 0 rgba(255,90,130,.4)}
+.card.holo .id{text-shadow:1.2px 0 rgba(110,215,255,.5),-1.2px 0 rgba(255,90,130,.45)}
+.card.holo .ic{animation:holoFlicker 2.9s steps(1) infinite}
+/* ---------- 爆閃燈:週期 0.4s = 2.5 flash/s(< 3Hz 安全) ---------- */
+.strobe{
+  width:8px;height:8px;border-radius:50%;background:var(--flash);
+  box-shadow:0 0 12px 2px var(--accent),0 0 30px 6px rgba(128,176,96,.35);
+  animation:strobe 0.4s steps(1) infinite;will-change:opacity;
+}
+@keyframes strobe{0%{opacity:1}8%{opacity:.08}50%{opacity:1}58%{opacity:.08}100%{opacity:.08}}
+/* ---------- 故障字 ---------- */
+.glitch{position:relative;display:inline-block;color:var(--flash)}
+.glitch::before,.glitch::after{
+  content:attr(data-text);position:absolute;inset:0;overflow:hidden;
+}
+.glitch::before{color:var(--accent);z-index:-1;animation:gl1 3.2s infinite steps(1)}
+.glitch::after{color:#3d6b4f;z-index:-2;animation:gl2 2.7s infinite steps(1)}
+@keyframes gl1{0%,92%{transform:none;clip-path:inset(0 0 0 0)}
+  93%{transform:translate(-6px,2px);clip-path:inset(12% 0 55% 0)}
+  96%{transform:translate(5px,-1px);clip-path:inset(60% 0 8% 0)}
+  98%{transform:none;clip-path:inset(0 0 0 0)}}
+@keyframes gl2{0%,88%{transform:none;clip-path:inset(0 0 0 0)}
+  89%{transform:translate(6px,-2px);clip-path:inset(40% 0 30% 0)}
+  93%{transform:translate(-5px,1px);clip-path:inset(75% 0 3% 0)}
+  95%{transform:none;clip-path:inset(0 0 0 0)}}
+/* ---------- 導覽 ---------- */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;
+  background:linear-gradient(180deg,rgba(5,10,9,.92),rgba(5,10,9,.55) 70%,transparent);
+  backdrop-filter:none;
+}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{
+  width:40px;height:40px;border-radius:10px;display:grid;place-items:center;
+  background:var(--bg-panel);border:1px solid var(--line);
+  color:var(--flash);font-family:var(--font-mono);font-weight:700;font-size:13px;
+  box-shadow:inset 0 0 14px rgba(128,176,96,.25);
+  animation:breath 4.5s ease-in-out infinite;
+}
+.logo small{display:block;font-family:var(--font-mono);font-size:9px;letter-spacing:.35em;color:var(--sage)}
+.logo b{color:var(--flash);letter-spacing:.12em;font-size:15px}
+.fx-toggle{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.2em;cursor:pointer;
+  color:var(--accent);background:rgba(16,34,29,.8);border:1px solid var(--line);
+  padding:8px 16px;border-radius:999px;transition:transform .2s,border-color .2s;
+}
+.fx-toggle:hover{transform:translateY(-2px);border-color:var(--accent)}
+/* ---------- HERO ---------- */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;
+  padding:120px 7vw 60px;overflow:hidden}
+#fluid{position:absolute;inset:0;width:100%;height:100%;z-index:0;opacity:.9}
+#particles{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.hero-inner{position:relative;z-index:2;max-width:1100px}
+.tag-line{
+  font-family:var(--font-mono);font-size:11px;letter-spacing:.5em;color:var(--accent);
+  display:flex;align-items:center;gap:14px;margin-bottom:22px;
+}
+.tag-line::before{content:"";width:52px;height:1px;background:var(--accent)}
+h1{
+  font-size:clamp(44px,7.4vw,104px);line-height:1.06;letter-spacing:.02em;
+  color:var(--flash);font-weight:900;
+}
+h1 .thin{font-weight:300;color:var(--text)}
+.hero p.lead{max-width:620px;margin-top:26px;font-size:17px;color:var(--text)}
+.hero p.lead em{color:var(--accent);font-style:normal}
+.strobe-row{display:flex;gap:14px;align-items:center;margin-top:38px}
+.strobe-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.3em;color:var(--sage)}
+.hero-stats{display:flex;gap:clamp(20px,4vw,64px);margin-top:56px;flex-wrap:wrap}
+.stat{border-left:1px solid var(--line);padding-left:18px}
+.stat b{display:block;font-family:var(--font-mono);font-size:clamp(26px,3.4vw,44px);color:var(--flash)}
+.stat span{font-family:var(--font-mono);font-size:10px;letter-spacing:.28em;color:var(--sage)}
+.scroll-hint{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:2;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.4em;color:var(--sage);
+  animation:breath 3s ease-in-out infinite;
+}
+/* ---------- 章節通用 ---------- */
+section{position:relative;padding:110px 7vw}
+.sec-head{margin-bottom:56px}
+.sec-head .k{font-family:var(--font-mono);font-size:11px;letter-spacing:.5em;color:var(--accent)}
+.sec-head h2{font-size:clamp(28px,4vw,52px);color:var(--flash);margin-top:12px;font-weight:800}
+/* ---------- 特性卡 ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:22px;max-width:1280px;margin:0 auto}
+.card{
+  position:relative;background:linear-gradient(160deg,var(--bg-panel),rgba(11,25,22,.7));
+  border:1px solid var(--line);border-radius:18px;padding:30px 26px;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s;
+  will-change:transform;overflow:hidden;
+}
+.card::before{ /* 呼吸邊光 */
+  content:"";position:absolute;inset:-1px;border-radius:18px;pointer-events:none;
+  box-shadow:inset 0 0 0 1px rgba(128,176,96,.0);
+  animation:cardGlow 4.8s ease-in-out infinite;animation-delay:var(--d,0s);
+}
+@keyframes cardGlow{0%,100%{box-shadow:inset 0 0 0 1px rgba(128,176,96,.04)}
+  50%{box-shadow:inset 0 0 22px 1px rgba(128,176,96,.22)}}
+.card:hover{transform:translateY(-8px) scale(1.015);border-color:var(--accent);
+  box-shadow:0 18px 50px -18px rgba(128,176,96,.35)}
+.card .id{font-family:var(--font-mono);font-size:10px;letter-spacing:.35em;color:var(--accent)}
+.card h3{color:var(--flash);font-size:20px;margin:12px 0 10px}
+.card p{font-size:14px;color:var(--text)}
+.card .ic{font-size:30px;filter:drop-shadow(0 0 8px rgba(128,176,96,.6))}
+/* ---------- 互動區 ---------- */
+.interactive-wrap{
+  max-width:1280px;margin:0 auto;border:1px solid var(--line);border-radius:24px;
+  background:radial-gradient(1200px 500px at 50% 0%,rgba(128,176,96,.08),transparent 60%),var(--bg-main);
+  padding:60px 5%;text-align:center;position:relative;overflow:hidden;
+}
+.core-stage{position:relative;height:340px;display:grid;place-items:center;margin:26px 0}
+#core{
+  width:190px;height:190px;border-radius:50%;cursor:pointer;border:none;
+  background:radial-gradient(circle at 38% 34%,#1c352c,var(--bg-deep) 70%);
+  box-shadow:0 0 0 1px var(--line),0 0 46px rgba(128,176,96,.28),inset 0 0 40px rgba(128,176,96,.18);
+  position:relative;color:var(--flash);font-family:var(--font-mono);font-size:11px;letter-spacing:.3em;
+  transition:transform .25s;will-change:transform;
+}
+#core:hover{transform:scale(1.05)}
+#core::before{content:"";position:absolute;inset:-26px;border-radius:50%;
+  border:1px dashed rgba(128,176,96,.35);animation:spin 14s linear infinite}
+#core::after{content:"";position:absolute;inset:-52px;border-radius:50%;
+  border:1px solid rgba(69,85,75,.4);animation:spin 26s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pulse-ring{
+  position:absolute;width:190px;height:190px;border-radius:50%;pointer-events:none;
+  border:2px solid var(--accent);opacity:0;will-change:transform,opacity;
+}
+.pulse-ring.go{animation:pulse 1.1s ease-out forwards}
+@keyframes pulse{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(4.4)}}
+.core-readout{font-family:var(--font-mono);font-size:12px;color:var(--accent);letter-spacing:.2em;min-height:20px}
+.slider-row{display:flex;align-items:center;gap:18px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+.slider-row label{font-family:var(--font-mono);font-size:11px;letter-spacing:.25em;color:var(--sage)}
+input[type=range]{-webkit-appearance:none;width:280px;height:3px;border-radius:2px;background:var(--line);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 12px var(--accent);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border:none;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 12px var(--accent);cursor:pointer}
+/* ---------- CTA ---------- */
+.cta{
+  text-align:center;border-top:1px solid var(--line);
+  background:radial-gradient(800px 320px at 50% 120%,rgba(128,176,96,.14),transparent 70%);
+}
+.cta h2{font-size:clamp(30px,4.6vw,60px);color:var(--flash);font-weight:900}
+.cta p{margin:18px auto 40px;max-width:560px}
+.cta-btn{
+  display:inline-block;font-family:var(--font-mono);letter-spacing:.3em;font-size:13px;
+  color:var(--bg-deep);background:var(--accent);padding:18px 52px;border-radius:999px;
+  text-decoration:none;font-weight:700;
+  box-shadow:0 0 30px rgba(128,176,96,.45);
+  transition:transform .25s,box-shadow .25s;will-change:transform;
+}
+.cta-btn:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 0 60px rgba(128,176,96,.7)}
+.cta .strobe-row{justify-content:center;margin-top:44px}
+/* ---------- footer ---------- */
+footer{padding:36px 7vw;border-top:1px solid var(--line);display:flex;justify-content:space-between;
+  font-family:var(--font-mono);font-size:10px;letter-spacing:.25em;color:var(--sage);flex-wrap:wrap;gap:12px}
+/* ---------- 特效開關 ---------- */
+body.fx-off .breath,body.fx-off .strobe,body.fx-off .glitch::before,body.fx-off .glitch::after,
+body.fx-off #core::before,body.fx-off #core::after{animation:none!important}
+body.fx-off .strobe{opacity:.6;animation:none}
+body.fx-off #fluid,body.fx-off #particles{display:none}
+body.fx-off .beams{display:none}
+body.fx-off #rings{display:none}
+body.fx-off #ship{display:none}
+/* demo 模式:光束定住方便驗證/錄影 */
+body.demo .beam{opacity:.8;animation:none;transform:rotate(12deg) translateX(0) scaleX(.85)}
+body.fx-off .scanlines::after{animation:none}
+/* ---------- 降低動態 ---------- */
+/* 減少動態:僅關閉捲動平滑,不再殺死任何動畫特效 */
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
+@media (max-width:640px){nav{padding:12px 16px}section{padding:80px 6vw}}
+</style>
+</head>
+<body>
+<div class="scanlines" aria-hidden="true"></div>
+<canvas id="rings" aria-hidden="true"></canvas>
+<canvas id="ship" aria-hidden="true"></canvas>
+
+<nav>
+  <div class="logo">
+    <div class="logo-mark">XC</div>
+    <div><b>XENO·CORE</b><small>ALIEN TECH × ROBOTICS</small></div>
+  </div>
+  <button class="fx-toggle" id="fxToggle" aria-pressed="true">◈ 特效 ON</button>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <canvas id="fluid" aria-hidden="true"></canvas>
+  <canvas id="particles" aria-hidden="true"></canvas>
+  <div class="beams" aria-hidden="true">
+    <div class="beam b1"></div><div class="beam b2"></div><div class="beam b3"></div>
+  </div>
+  <div class="breath" style="width:46vw;height:46vw;top:-14vw;right:-12vw;background:radial-gradient(circle,rgba(128,176,96,.14),transparent 65%)"></div>
+  <div class="breath" style="width:30vw;height:30vw;bottom:-8vw;left:-6vw;background:radial-gradient(circle,rgba(16,34,29,.9),transparent 70%);animation-delay:1.6s"></div>
+
+  <div class="hero-inner">
+    <div class="tag-line">XENO SIGNAL DETECTED // 訊號來自深空</div>
+    <h1><span class="glitch" data-text="外星機甲紀元">外星機甲紀元</span><br>
+        <span class="thin">ROBOTICS <em style="color:var(--accent);font-style:normal">/</em> NEXT</span></h1>
+    <p class="lead">異星合金、流體光導、神經機體 —— 我們把<em>外星高科技</em>鑄進每一台機器人裡。
+    爆閃燈、呼吸燈、流體光,在此頁全數點亮,並為你的 GTX 1050 Ti 調校到滿幀不 LAG。</p>
+    <div class="strobe-row">
+      <div class="strobe"></div><div class="strobe" style="animation-delay:.13s"></div>
+      <div class="strobe" style="animation-delay:.27s"></div>
+      <span class="strobe-label">CORE STROBE // 2.5Hz 安全頻率</span>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><b data-count="47">0</b><span>SYNC MODULES 同步模組</span></div>
+      <div class="stat"><b data-count="128">0</b><span>TB NEURAL MAP 神經圖譜</span></div>
+      <div class="stat"><b data-count="99">0</b><span>% UPLINK STABILITY 上鏈穩定度</span></div>
+    </div>
+  </div>
+  <div class="scroll-hint">▼ SCROLL 進入機體庫</div>
+</header>
+
+<!-- ================= 特性 ================= -->
+<section id="tech">
+  <div class="sec-head">
+    <div class="k">SPEC MATRIX ／ 機體規格</div>
+    <h2>六大外星科技核心</h2>
+  </div>
+  <div class="grid">
+    <div class="card holo" style="--d:0s"><div class="ic">🛸</div><div class="id">SYS·01 XENO ALLOY</div>
+      <h3>異星記憶合金</h3><p>仿墜毀幽浮殘骸解析出的自癒合金,受損後 0.8 秒內重組原始晶格,機體壽命提升 12 倍。</p></div>
+    <div class="card holo" style="--d:.6s"><div class="ic">💡</div><div class="id">SYS·02 FLUID LUMEN</div>
+      <h3>流體光導系統</h3><p>光在機體表面如液體流動,隨速度與情緒變換波形;GTX 1050 Ti 上以半解析度 shader 即時演算。</p></div>
+    <div class="card holo" style="--d:1.2s"><div class="ic">🧠</div><div class="id">SYS·03 NEURO CORE</div>
+      <h3>神經同位核心</h3><p>每台機器人內建 128 TB 神經圖譜,決策延遲 3 毫秒,等同異星文明直覺式反應。</p></div>
+    <div class="card holo" style="--d:.3s"><div class="ic">⚡</div><div class="id">SYS·04 PULSE DRIVE</div>
+      <h3>爆閃脈衝推進</h3><p>以 2.5Hz 安全爆閃節奏釋放脈衝電漿,瞬間輸出 8 馬赫推力,燈光即推力的語言。</p></div>
+    <div class="card holo" style="--d:.9s"><div class="ic">🔋</div><div class="id">SYS·05 BREATH CELL</div>
+      <h3>呼吸能源槽</h3><p>能源槽如生物般脈動呼吸,充電時整座機庫泛起綠色潮汐光,能源轉換效率 99.2%。</p></div>
+    <div class="card holo" style="--d:1.5s"><div class="ic">🤖</div><div class="id">SYS·06 SWARM MIND</div>
+      <h3>蜂群意志</h3><p>1,024 台機體共享單一意志,隊形重組只要一次心跳,同步誤差低於一枚光子飛行的距離。</p></div>
+  </div>
+</section>
+
+<!-- ================= 互動區 ================= -->
+<section id="lab">
+  <div class="sec-head">
+    <div class="k">INTERACTIVE LAB ／ 可互動艙</div>
+    <h2>喚醒你的機體核心</h2>
+  </div>
+  <div class="interactive-wrap">
+    <div class="breath" style="width:60%;height:60%;top:20%;left:20%;background:radial-gradient(circle,rgba(128,176,96,.1),transparent 70%)"></div>
+    <p style="position:relative">移動滑鼠餵養粒子群、<b style="color:var(--flash)">點擊核心</b>發送脈衝,拉動滑桿注入流體光能。</p>
+    <div class="core-stage">
+      <div class="pulse-ring" id="ring1"></div>
+      <div class="pulse-ring" id="ring2"></div>
+      <button id="core">TAP · 啟動核心</button>
+    </div>
+    <div class="core-readout" id="readout">// CORE DORMANT — 等待指令_</div>
+    <div class="slider-row">
+      <label>流體光強度</label>
+      <input type="range" id="energy" min="10" max="100" value="62" aria-label="流體光強度">
+      <span id="energyVal" style="font-family:var(--font-mono);color:var(--accent);font-size:12px">62%</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section class="cta" id="join">
+  <div class="k" style="font-family:var(--font-mono);letter-spacing:.5em;color:var(--accent);font-size:11px">UPLINK READY ／ 上鏈就緒</div>
+  <h2 style="margin-top:14px">加入機甲黎明計畫</h2>
+  <p>第一批異星機體將於訊號塔點燈時甦醒。留下你的座標,成為目睹流體光劃破夜空的人。</p>
+  <a class="cta-btn" href="#" id="joinBtn">⯅ 立即預約同步</a>
+  <div class="strobe-row">
+    <div class="strobe"></div><span class="strobe-label">SIGNAL BOOST // 訊號增強中</span>
+  </div>
+</section>
+
+<footer>
+  <span>XENO·CORE © 2026 // ALIEN ROBOTICS DIVISION</span>
+  <span>RENDER TARGET: GTX 1050 Ti / HALF-RES SHADER / ≤300 PARTICLES</span>
+</footer>
+
+<script>
+"use strict";
+/* ============ 共用狀態 ============ */
+/* 特效一律開啟:不因系統「減少動態」設定靜默關閉(使用者已明確要求全開) */
+const reduced = false;
+let fxOn = true, energy = .62;
+const mouse = {x:.5, y:.5, tx:.5, ty:.5, active:false};
+
+/* ============ WebGL 流體光(半解析度) ============ */
+const fluidCv = document.getElementById('fluid');
+const gl = fluidCv.getContext('webgl', {antialias:false, alpha:true, powerPreference:'high-performance', preserveDrawingBuffer:true});
+let prog=null, uni={}, shaderScale=.5, fluidOK=!!gl;
+const FRAG=`
+precision mediump float;
+uniform vec2 uRes; uniform float uT; uniform vec2 uM; uniform float uE;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
+  return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*n(p);p*=2.03;a*=.5;}return v;}
+void main(){
+  vec2 uv=gl_FragCoord.xy/uRes; vec2 p=uv*vec2(uRes.x/uRes.y,1.)*3.;
+  float t=uT*.12;
+  float f=fbm(p+fbm(p+t)*1.4+uM*1.2);
+  vec3 deep=vec3(.020,.039,.035);   /* #050A09 */
+  vec3 mid =vec3(.043,.098,.086);   /* #0B1916 */
+  vec3 pan =vec3(.063,.133,.114);   /* #10221D */
+  vec3 acc =vec3(.502,.690,.376);   /* #80B060 */
+  vec3 col=mix(deep,mid,f); col=mix(col,pan,smoothstep(.35,.8,f));
+  float d=length(uv-uM);
+  float glow=exp(-d*4.5)*uE*(0.55+0.45*sin(uT*2.0+f*6.0));
+  col+=acc*glow;
+  col+=acc*smoothstep(.75,1.,f)*.28*uE;
+  gl_FragColor=vec4(col,1.);
+}`;
+function mkShader(){
+  if(!gl) return;
+  const vs=gl.createShader(gl.VERTEX_SHADER); gl.shaderSource(vs,'attribute vec2 aP;void main(){gl_Position=vec4(aP,0.,1.);}'); gl.compileShader(vs);
+  const fs=gl.createShader(gl.FRAGMENT_SHADER); gl.shaderSource(fs,FRAG); gl.compileShader(fs);
+  if(!gl.getShaderParameter(fs,gl.COMPILE_STATUS)){fluidOK=false;return;}
+  prog=gl.createProgram(); gl.attachShader(prog,vs); gl.attachShader(prog,fs); gl.linkProgram(prog); gl.useProgram(prog);
+  const buf=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(prog,'aP'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  uni.uRes=gl.getUniformLocation(prog,'uRes'); uni.uT=gl.getUniformLocation(prog,'uT');
+  uni.uM=gl.getUniformLocation(prog,'uM'); uni.uE=gl.getUniformLocation(prog,'uE');
+}
+function sizeFluid(){
+  if(!fluidOK) return;
+  const dpr=Math.min(devicePixelRatio||1,1.5);
+  const w=Math.max(2,innerWidth*shaderScale*dpr|0), h=Math.max(2,innerHeight*shaderScale*dpr|0);
+  if(fluidCv.width!==w||fluidCv.height!==h){fluidCv.width=w;fluidCv.height=h;gl.viewport(0,0,w,h);}
+}
+function drawFluid(t){
+  if(!fluidOK) return;
+  gl.uniform2f(uni.uRes,fluidCv.width,fluidCv.height);
+  gl.uniform1f(uni.uT,t);
+  gl.uniform2f(uni.uM,mouse.x,1-mouse.y);
+  gl.uniform1f(uni.uE,energy);
+  gl.drawArrays(gl.TRIANGLES,0,3);
+}
+mkShader();
+
+/* ============ 粒子(≤300,滑鼠反應)+ 流星 ============ */
+const pCv=document.getElementById('particles'), pctx=pCv.getContext('2d');
+let P=[], MAXP=260, qStage=0;
+
+/* --- 流星系統(拖尾火球,共用同一張 canvas;高頻生成+上限保護) --- */
+let M=[], MAXM=14, meteorClock=0, meteorEvery=34; /* 每 ~1.8s 自然生成一顆 */
+function spawnMeteor(burst){
+  if(M.length>=MAXM) return;
+  const fromLeft=Math.random()<.5;
+  const sp=(Math.random()*5+6)*(energy*0.6+0.7);          /* 能量越高越快 */
+  const ang=(Math.random()*14+10)*Math.PI/180;            /* 10°~24° 斜角 */
+  M.push({
+    x:Math.random()*innerWidth*.7+innerWidth*.15,
+    y:-20-Math.random()*60,
+    vx:(fromLeft?1:-1)*sp*Math.cos(ang),
+    vy:sp*Math.sin(ang)+1.5,
+    tail:Math.random()*70+90,                             /* 拖尾長度 px */
+    r:Math.random()*1.4+1.4,
+    life:1
+  });
+}
+function drawMeteors(now){
+  /* 自然生成(能量影響頻率) */
+  meteorClock++;
+  if(meteorClock>=meteorEvery){meteorClock=0;meteorEvery=Math.max(18,(1.4-energy)*60);spawnMeteor(false);}
+  for(let i=M.length-1;i>=0;i--){
+    const m=M[i];
+    m.x+=m.vx; m.y+=m.vy;
+    /* 出界或落出畫面就回收 */
+    if(m.y>innerHeight+60||m.x<-80||m.x>innerWidth+80){M.splice(i,1);continue;}
+    const tx=m.x-m.vx*(m.tail/Math.max(1,Math.hypot(m.vx,m.vy))),
+          ty=m.y-m.vy*(m.tail/Math.max(1,Math.hypot(m.vx,m.vy)));
+    /* 線性光軌拖尾 */
+    const g=pctx.createLinearGradient(m.x,m.y,tx,ty);
+    g.addColorStop(0,'rgba(224,240,240,'+(0.9*m.life)+')');
+    g.addColorStop(.25,'rgba(128,176,96,'+(0.55*m.life)+')');
+    g.addColorStop(1,'rgba(128,176,96,0)');
+    pctx.strokeStyle=g;
+    pctx.lineWidth=m.r*1.6;
+    pctx.lineCap='round';
+    pctx.beginPath();pctx.moveTo(m.x,m.y);pctx.lineTo(tx,ty);pctx.stroke();
+    /* 亮核光暈 */
+    const hg=pctx.createRadialGradient(m.x,m.y,0,m.x,m.y,m.r*6);
+    hg.addColorStop(0,'rgba(224,240,240,'+(0.95*m.life)+')');
+    hg.addColorStop(.4,'rgba(128,176,96,'+(0.4*m.life)+')');
+    hg.addColorStop(1,'rgba(128,176,96,0)');
+    pctx.fillStyle=hg;
+    pctx.beginPath();pctx.arc(m.x,m.y,m.r*6,0,6.283);pctx.fill();
+  }
+}
+function meteorBurst(n){for(let i=0;i<n;i++)setTimeout(()=>spawnMeteor(true),i*160);}
+function sizeParticles(){
+  const dpr=Math.min(devicePixelRatio||1,1.5);
+  pCv.width=innerWidth*dpr|0; pCv.height=innerHeight*dpr|0;
+  pctx.setTransform(dpr,0,0,dpr,0,0);
+}
+function spawn(){
+  P=[];
+  for(let i=0;i<MAXP;i++) P.push({
+    x:Math.random()*innerWidth, y:Math.random()*innerHeight,
+    vx:(Math.random()-.5)*.4, vy:(Math.random()-.5)*.4,
+    r:Math.random()*1.8+.6, a:Math.random()*.6+.2,
+    c:Math.random()<.82?'128,176,96':'224,240,240'
+  });
+}
+function drawParticles(now){
+  pctx.clearRect(0,0,innerWidth,innerHeight);
+  drawMeteors(now);
+  const mx=mouse.x*innerWidth, my=mouse.y*innerHeight;
+  for(let i=0;i<P.length;i++){
+    const p=P[i];
+    let dx=mx-p.x, dy=my-p.y, d2=dx*dx+dy*dy;
+    if(mouse.active&&d2<90000){const d=Math.sqrt(d2)||1,f=(1-d/300)*.06;p.vx+=dx/d*f;p.vy+=dy/d*f;}
+    p.vx*=.985;p.vy*=.985;
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<-10)p.x=innerWidth+10; if(p.x>innerWidth+10)p.x=-10;
+    if(p.y<-10)p.y=innerHeight+10; if(p.y>innerHeight+10)p.y=-10;
+    pctx.globalAlpha=p.a*(0.7+0.3*Math.sin(performance.now()*.002+i));
+    pctx.fillStyle='rgb('+p.c+')';
+    pctx.beginPath();pctx.arc(p.x,p.y,p.r,0,6.283);pctx.fill();
+  }
+  pctx.globalAlpha=1;
+}
+spawn();
+meteorBurst(3); /* 進場先送一排流星 */
+
+/* ============ 裝甲飛船:程序化向量線稿,慢速漂移(零貼圖、零圖片) ============ */
+const sCv=document.getElementById('ship'), sctx=sCv.getContext('2d');
+let ships=[], MAXSHIPS=2;
+/* 角狀裝甲外殼輪廓(機鼻朝右,局部座標) */
+const HULL=[[-70,-8],[-40,-20],[10,-22],[45,-12],[70,-4],[70,4],[45,12],[10,20],[-40,18],[-70,8]];
+/* 裝甲板縫線 */
+const SEAMS=[[[-40,-19],[-36,17]],[[-6,-21],[-2,19]],[[26,-18],[29,13]],[[-60,-13],[-58,10]]];
+/* 座艙罩 */
+const COCK=[[6,-13],[26,-11],[19,-5],[4,-8]];
+function sizeShips(){
+  const dpr=Math.min(devicePixelRatio||1,1.5);
+  sCv.width=innerWidth*dpr|0; sCv.height=innerHeight*dpr|0;
+  sctx.setTransform(dpr,0,0,dpr,0,0);
+}
+function spawnShip(inView){
+  if(ships.length>=MAXSHIPS) return;
+  const dir=Math.random()<.5?1:-1;
+  ships.push({
+    x:inView?innerWidth*(.22+Math.random()*.5):(dir===1?-180:innerWidth+180),
+    y:innerHeight*(0.10+Math.random()*0.40),
+    dir, spd:0.9+Math.random()*1.2,               /* 慢速漂移 */
+    s:(Math.min(innerWidth,1600)/1000)*(0.8+Math.random()*0.5),
+    bobA:8+Math.random()*10, bobW:0.0006+Math.random()*0.0004,
+    ph:Math.random()*6.28, tilt:(dir===1?-1:1)*(0.04+Math.random()*0.04)
+  });
+}
+function drawShips(now){
+  sctx.clearRect(0,0,innerWidth,innerHeight);
+  for(let i=ships.length-1;i>=0;i--){
+    const sh=ships[i];
+    sh.x+=sh.spd*sh.dir;
+    if((sh.dir===1&&sh.x>innerWidth+220)||(sh.dir===-1&&sh.x<-220)){ships.splice(i,1);continue;}
+    const y=sh.y+Math.sin(now*sh.bobW+sh.ph)*sh.bobA;
+    sctx.save();
+    sctx.translate(sh.x,y); sctx.rotate(sh.tilt); sctx.scale(sh.s*sh.dir,sh.s);
+    sctx.lineJoin='round';
+    /* 引擎尾焰(lighter 疊光,替代 shadowBlur) */
+    sctx.globalCompositeOperation='lighter';
+    const fg=sctx.createLinearGradient(-70,0,-150,0);
+    fg.addColorStop(0,'rgba(224,240,240,.55)');fg.addColorStop(1,'rgba(128,176,96,0)');
+    sctx.strokeStyle=fg;sctx.lineWidth=3;sctx.lineCap='round';
+    sctx.beginPath();sctx.moveTo(-70,-3);sctx.lineTo(-150,0);sctx.moveTo(-70,3);sctx.lineTo(-150,0);sctx.stroke();
+    sctx.globalCompositeOperation='source-over';
+    /* 裝甲外殼 */
+    sctx.strokeStyle='rgba(150,200,130,.85)';sctx.lineWidth=1.6;
+    sctx.beginPath();HULL.forEach((p,j)=>j?sctx.lineTo(p[0],p[1]):sctx.moveTo(p[0],p[1]));sctx.closePath();sctx.stroke();
+    /* 板縫線 */
+    sctx.strokeStyle='rgba(128,176,96,.45)';sctx.lineWidth=1;
+    for(const L of SEAMS){sctx.beginPath();sctx.moveTo(L[0][0],L[0][1]);sctx.lineTo(L[1][0],L[1][1]);sctx.stroke();}
+    /* 座艙 */
+    sctx.strokeStyle='rgba(224,240,240,.8)';
+    sctx.beginPath();COCK.forEach((p,j)=>j?sctx.lineTo(p[0],p[1]):sctx.moveTo(p[0],p[1]));sctx.closePath();sctx.stroke();
+    /* 引擎呼吸燈 + 機鼻航行燈 */
+    const blink=(Math.sin(now*0.004+sh.ph)>0.4)?0.95:0.25;
+    sctx.fillStyle='rgba(128,176,96,'+blink+')';
+    sctx.beginPath();sctx.arc(-66,0,3,0,6.283);sctx.fill();
+    sctx.fillStyle='rgba(224,240,240,'+(blink*.9)+')';
+    sctx.beginPath();sctx.arc(66,0,1.8,0,6.283);sctx.fill();
+    sctx.restore();
+  }
+}
+sizeShips();
+if(!reduced){spawnShip();setTimeout(spawnShip,9000);}
+
+/* ============ 衝擊波光環:預先配置物件池 + 單一 canvas + lighter 疊加 ============
+   設計原則:1) 每次點擊 0 個新 DOM 節點  2) 不用 shadowBlur/box-shadow(效能殺手)
+   3) globalCompositeOperation='lighter' 讓多層光環自然疊加變亮
+   4) 池滿回收最舊光環,永不配置新物件 */
+const rCv=document.getElementById('rings'), rctx=rCv.getContext('2d');
+const RING_CAP=72, CLICK_RINGS=4;
+const RP=[];
+for(let i=0;i<RING_CAP;i++) RP.push({on:false,x:0,y:0,t0:0,delay:0,dur:0,maxR:0,w:0,a:0,flash:false});
+let ringsActive=0;
+function sizeRings(){
+  const dpr=Math.min(devicePixelRatio||1,1.5);
+  rCv.width=innerWidth*dpr|0; rCv.height=innerHeight*dpr|0;
+  rctx.setTransform(dpr,0,0,dpr,0,0);
+}
+function spawnRing(x,y,delay,dur,maxR,w,a,flash){
+  let slot=null, oldest=null, oldestT=Infinity;
+  for(let i=0;i<RING_CAP;i++){
+    const r=RP[i];
+    if(!r.on){slot=r;break;}
+    const end=r.t0+r.delay+r.dur;
+    if(end<oldestT){oldestT=end;oldest=r;}
+  }
+  const r=slot||oldest;
+  if(!r) return;
+  if(slot) ringsActive++;               /* 只有取用空槽才改變活躍數 */
+  r.on=true;r.x=x;r.y=y;r.t0=performance.now();
+  r.delay=delay;r.dur=dur;r.maxR=maxR;r.w=w;r.a=a;r.flash=flash;
+}
+function spawnShockwave(x,y){
+  if(!fxOn||reduced) return;
+  const big=Math.min(innerWidth,innerHeight);
+  /* 每次點擊 = 4 道同心延遲光環(越多層越亮) */
+  for(let i=0;i<CLICK_RINGS;i++)
+    spawnRing(x,y, i*90, 620+i*140, big*(0.20+i*0.11), 5-i*0.8, .85-i*.13, i===1);
+  /* 能量滿檔(>80%)追加 2 道巨型慢速外環 → 連點疊成多層風暴 */
+  if(energy>.8)
+    for(let i=0;i<2;i++) spawnRing(x,y, 300+i*150, 980, big*.52, 2, .5, true);
+}
+function drawRings(now){
+  rctx.clearRect(0,0,innerWidth,innerHeight);
+  if(!ringsActive) return;              /* 池空 → 整段繪製跳過(canvas 閒置) */
+  rctx.globalCompositeOperation='lighter';
+  for(let i=0;i<RING_CAP;i++){
+    const r=RP[i];
+    if(!r.on) continue;
+    const k=(now-r.t0-r.delay)/r.dur;
+    if(k<0) continue;
+    if(k>=1){r.on=false;ringsActive--;continue;}
+    const e=1-Math.pow(1-k,3), rad=r.maxR*e, alpha=r.a*(1-k);
+    const lw=r.w*(1-k*.55);
+    /* 柔光外暈(替代 shadowBlur,便宜 10 倍) */
+    rctx.lineWidth=lw*3;
+    rctx.strokeStyle='rgba(128,176,96,'+(alpha*.22)+')';
+    rctx.beginPath();rctx.arc(r.x,r.y,rad,0,6.283);rctx.stroke();
+    /* 主環:近白閃環 or 綠環 */
+    rctx.lineWidth=lw;
+    rctx.strokeStyle=r.flash?'rgba(224,240,240,'+alpha+')':'rgba(128,176,96,'+(alpha*.9)+')';
+    rctx.beginPath();rctx.arc(r.x,r.y,rad,0,6.283);rctx.stroke();
+  }
+  rctx.globalCompositeOperation='source-over';
+}
+addEventListener('pointerdown',e=>{spawnShockwave(e.clientX,e.clientY);},{passive:true});
+/* 開機點火:載入後 0.9s 在畫面中央炸一發 */
+setTimeout(()=>spawnShockwave(innerWidth*.5,innerHeight*.42),900);
+/* 測試/展示掛鉤:?demo=rings | meteor | ship | all */
+const demo=(location.search.split('demo=')[1]||'').split('&')[0];
+if(demo&&!reduced){
+  document.body.classList.add('demo');
+  if(demo.indexOf('rings')>-1||demo==='all'){
+    setTimeout(()=>spawnShockwave(innerWidth*.5,innerHeight*.5),300);
+    setInterval(()=>spawnShockwave(innerWidth*(.2+Math.random()*.6),innerHeight*(.18+Math.random()*.55)),850);
+  }
+  if(demo.indexOf('meteor')>-1||demo==='all') setInterval(()=>spawnMeteor(true),650);
+  if(demo.indexOf('ship')>-1||demo==='all'){MAXSHIPS=3;spawnShip(true);setTimeout(()=>spawnShip(true),1500);setTimeout(()=>spawnShip(true),4000);}
+}
+
+/* ============ 單一 rAF 主循環 + FPS 自動降級 ============ */
+let frames=0, lastFpsT=performance.now(), running=true;
+const io=new IntersectionObserver(e=>{running=e[0].isIntersecting;},{threshold:.02});
+io.observe(document.body);
+document.addEventListener('visibilitychange',()=>{running=!document.hidden;});
+function resizeAll(){sizeFluid();sizeParticles();sizeRings();sizeShips();}
+addEventListener('resize',resizeAll,{passive:true});
+function loop(now){
+  requestAnimationFrame(loop);
+  if(!running||!fxOn) return;
+  mouse.x+=(mouse.tx-mouse.x)*.06; mouse.y+=(mouse.ty-mouse.y)*.06;
+  drawFluid(now*.001);
+  drawParticles(now);
+  drawRings(now);
+  drawShips(now);
+  /* FPS 監測 → 三段降級 */
+  frames++;
+  if(now-lastFpsT>=2000){
+    const fps=frames*1000/(now-lastFpsT); frames=0; lastFpsT=now;
+    if(fps<38&&qStage<3){
+      qStage++;
+      if(qStage===1){MAXP=140;MAXM=3;MAXSHIPS=1;spawn();shaderScale=.4;}
+      else if(qStage===2){MAXP=70;MAXM=2;MAXSHIPS=0;ships=[];spawn();shaderScale=.3;}
+      else{fluidOK=false;MAXP=0;MAXM=0;P=[];M=[];
+        for(let i=0;i<RING_CAP;i++)RP[i].on=false;ringsActive=0;
+        fluidCv.style.display='none';}
+      resizeAll();
+    }
+  }
+}
+/* ★ 關鍵修復:初始就設定所有 canvas 尺寸(原本只在 resize 時才設定,
+   導致開啟檔案後 canvas 停在 300×150 預設值,粒子/流星/飛船全部畫在範圍外) */
+resizeAll();
+requestAnimationFrame(loop);
+
+/* ============ 滑鼠 / 互動 ============ */
+addEventListener('pointermove',e=>{mouse.tx=e.clientX/innerWidth;mouse.ty=e.clientY/innerHeight;mouse.active=true;},{passive:true});
+const core=document.getElementById('core'), readout=document.getElementById('readout');
+const lines=['// PULSE EMITTED — 脈衝已發射 ▲','// SWARM SYNCING — 蜂群同步中 ⟳','// FLUID LIGHT surged — 流體光暴走!⚡','// NEURAL LINK 99.2% — 神經鏈結穩定 ◈'];
+let taps=0;
+core.addEventListener('click',()=>{
+  taps++;
+  for(const id of['ring1','ring2']){
+    const r=document.getElementById(id);
+    r.classList.remove('go'); void r.offsetWidth; r.classList.add('go');
+  }
+  core.style.transform='scale(1.14)'; setTimeout(()=>core.style.transform='',180);
+  meteorBurst(3); /* 點擊核心 → 召喚流星雨 */
+  energy=Math.min(1,energy+.12);
+  /* 能量滿檔時額外噴發一顆快速流星 */
+  if(energy>.85) setTimeout(()=>spawnMeteor(true),240);
+  document.getElementById('energy').value=Math.round(energy*100);
+  document.getElementById('energyVal').textContent=Math.round(energy*100)+'%';
+  readout.textContent=lines[taps%lines.length]+'  ['+taps+']';
+});
+document.getElementById('energy').addEventListener('input',e=>{
+  energy=e.target.value/100;
+  document.getElementById('energyVal').textContent=e.target.value+'%';
+});
+document.getElementById('joinBtn').addEventListener('click',e=>{
+  e.preventDefault();
+  readout.scrollIntoView({behavior:reduced?'auto':'smooth'});
+  core.click();
+});
+/* 數字滾動 */
+const counters=document.querySelectorAll('[data-count]');
+const cio=new IntersectionObserver(es=>{
+  es.forEach(en=>{
+    if(!en.isIntersecting) return;
+    const el=en.target, target=+el.dataset.count, t0=performance.now();
+    (function tick(now){
+      const k=Math.min(1,(now-t0)/1400), e=1-Math.pow(1-k,3);
+      el.textContent=Math.round(target*e);
+      if(k<1) requestAnimationFrame(tick);
+    })(t0);
+  });
+  cio.disconnect();
+},{threshold:.4});
+counters.forEach(c=>cio.observe(c));
+/* 特效開關 */
+const toggle=document.getElementById('fxToggle');
+toggle.addEventListener('click',()=>{
+  fxOn=!fxOn;
+  document.body.classList.toggle('fx-off',!fxOn);
+  toggle.textContent=fxOn?'◈ 特效 ON':'○ 特效 OFF';
+  toggle.setAttribute('aria-pressed',fxOn);
+  if(fxOn){lastFpsT=performance.now();frames=0;}
+});
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
