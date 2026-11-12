@@ -16,23 +16,23 @@
 } }
 </script>
 </head>
-<body class="">
+<body>
 
-<canvas id="gl" data-engine="three.js r160"></canvas>
+<canvas id="gl"></canvas>
 <div class="noise-fallback"></div>
 
 <!-- BOOT -->
-<div id="boot" class="gone">
+<div id="boot">
   <div class="boot-inner">
     <div class="boot-logo">NEXUS<span>//</span></div>
-    <div class="boot-lines mono" id="bootLines"><div><b>[INIT]</b> quantum core <span style="opacity:.5">…ok</span></div><div><b>[LOAD]</b> stellar catalogue · 120,000 objects <span style="opacity:.5">…ok</span></div><div><b>[SYNC]</b> gravitational field mesh <span style="opacity:.5">…ok</span></div><div><b>[CALIB]</b> event-horizon lens <span style="opacity:.5">…ok</span></div><div><b>[ARM]</b> warp drive coils <span style="opacity:.5">…ok</span></div><div><b>[LINK]</b> NEXUS corridor <span style="opacity:.5">…ok</span></div></div>
+    <div class="boot-lines mono" id="bootLines"></div><div><b>[LOAD]</b> stellar catalogue · 120,000 objects <span style="opacity:.5">…ok</span></div><div><b>[SYNC]</b> gravitational field mesh <span style="opacity:.5">…ok</span></div><div><b>[CALIB]</b> event-horizon lens <span style="opacity:.5">…ok</span></div><div><b>[ARM]</b> warp drive coils <span style="opacity:.5">…ok</span></div><div><b>[LINK]</b> NEXUS corridor <span style="opacity:.5">…ok</span></div></div>
     <div class="boot-bar"><i id="bootBar"></i></div>
   </div>
 </div>
 
 <!-- CURSOR -->
-<div id="cur-ring" style="transform: translate3d(459.733px, 1.13334px, 0px);"></div>
-<div id="cur-dot" style="transform: translate3d(459.733px, 1.13334px, 0px);"></div>
+<div id="cur-ring"></div>
+<div id="cur-dot"></div>
 
 <!-- HUD -->
 <header class="hud">
@@ -73,7 +73,7 @@
 
   <!-- 00 HERO -->
   <section class="sec hero" data-screen-label="00 Hero">
-    <div class="hero-wrap" data-depth="18" style="transform: translate3d(1.8375px, 15.2613px, 0px);">
+    <div class="hero-wrap" data-depth="18">
       <div class="tag mono reveal"><i></i>SECTOR 00 — 銀河核心</div>
       <h1 class="glitch" data-text="NEXUS">NEXUS</h1>
       <div class="hero-sub reveal"><span data-scramble="">穿越星際的邊界</span></div>
@@ -84,7 +84,7 @@
 
   <!-- 01 GALAXY -->
   <section class="sec left" data-screen-label="01 Galaxy">
-    <div class="block" data-depth="14" style="transform: translate3d(1.42916px, -37.1064px, 0px);">
+    <div class="block" data-depth="14">
       <div class="tag mono reveal"><i></i>SECTOR 01 — 螺旋星系</div>
       <h2 class="reveal"><span data-scramble="">九萬顆恆星，</span><br><span class="grad" data-scramble="">一次呼吸。</span></h2>
       <p class="reveal">每一顆粒子都依循克卜勒軌道運行——越靠近核心，旋轉得越快。將游標掠過星盤，親手撼動整座星系的引力場。</p>
@@ -93,7 +93,7 @@
 
   <!-- 02 WARP -->
   <section class="sec warp" data-screen-label="02 Warp">
-    <div class="warp-wrap" data-depth="10" style="transform: translate3d(-2.06446px, -22.0205px, 0px);">
+    <div class="warp-wrap" data-depth="10">
       <div class="tag mono reveal"><i></i>SECTOR 02 — 曲速航道</div>
       <h2 class="reveal"><span data-scramble="">曲速引擎</span> <span class="grad" data-scramble="">啟動</span></h2>
       <div class="warp-read mono reveal"><span class="dim">W</span><b id="warpBig">0.00</b></div>
@@ -103,7 +103,7 @@
 
   <!-- 03 SINGULARITY -->
   <section class="sec right" data-screen-label="03 Singularity">
-    <div class="block" data-depth="14" style="transform: translate3d(0.81335px, 66.4146px, 0px);">
+    <div class="block" data-depth="14">
       <div class="tag mono reveal"><i></i>SECTOR 03 — 事件視界</div>
       <h2 class="reveal"><span data-scramble="">光，</span><br><span class="grad" data-scramble="">也無法逃離。</span></h2>
       <p class="reveal">重力透鏡正在彎曲黑洞背後的星光，吸積盤以接近光速環繞奇點。點擊畫面任意處，在時空織面上投下一道漣漪。</p>
@@ -113,7 +113,7 @@
 
   <!-- 04 MODULES -->
   <section class="sec modules" data-screen-label="04 Modules">
-    <div class="mod-head" data-depth="10" style="transform: translate3d(1.16365px, 30.9297px, 0px);">
+    <div class="mod-head" data-depth="10">
       <div class="tag mono reveal"><i></i>SECTOR 04 — 系統模組</div>
       <h2 class="reveal"><span data-scramble="">驅動旅程的</span><span class="grad" data-scramble="">三顆心臟</span></h2>
     </div>
@@ -153,7 +153,7 @@
 
   <!-- 05 FINALE -->
   <section class="sec finale" data-screen-label="05 Finale">
-    <div class="fin-wrap" data-depth="16" style="transform: translate3d(-1.29985px, -8.75765px, 0px);">
+    <div class="fin-wrap" data-depth="16">
       <div class="tag mono reveal"><i></i>SECTOR 05 — 未知星域</div>
       <h2 class="reveal big"><span data-scramble="">下一個座標，</span><br><span class="grad" data-scramble="">由你決定。</span></h2>
       <button class="launch reveal" id="launch" data-magnet="">
